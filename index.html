@@ -2,13 +2,15 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Personal Hub">
+<meta name="apple-mobile-web-app-title" content="LifeOS">
 <meta name="theme-color" content="#000000">
+<link rel="apple-touch-icon" href="/favicon.png">
+<link rel="apple-touch-icon" href="https://via.placeholder.com/180x180/0A84FF/fff?text=MF">
 <meta name="description" content="Il tuo spazio personale digitale — foto, documenti, attività, veicoli e molto altro.">
-<title>Personal Hub</title>
+<title>LIFEOS</title>
 
 <!-- Font Awesome 6 (CDN) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -286,19 +288,14 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
 
   <!-- STATUS BAR -->
   <div class="statusbar">
-    <span class="sb-time" id="clock">9:41</span>
-    <div class="sb-icons">
-      <i class="fas fa-signal"></i>
-      <i class="fas fa-wifi"></i>
-      <i class="fas fa-battery-three-quarters"></i>
-    </div>
+    
   </div>
 
   <!-- TOP BAR -->
   <div class="topbar">
     <div class="tb-left">
-      <div class="tb-title" id="tb-title">Personal Hub</div>
-      <div class="tb-sub" id="tb-sub">Il tuo spazio personale</div>
+      <div class="tb-title" id="tb-title">LifeOS</div>
+      <div class="tb-sub" id="tb-sub">La tua vita in un unico spazio privato</div>
     </div>
     <div class="tb-actions">
       <button class="tb-btn" onclick="openSearch()" aria-label="Cerca"><i class="fas fa-magnifying-glass"></i></button>
@@ -404,71 +401,16 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
     <!-- ======= VEHICLES ======= -->
     <div id="sec-vehicles" class="sec">
       <div id="veh-list"></div>
-      <div class="grp-hdr">
-        <span><i class="fas fa-box" style="color:var(--orange);margin-right:6px"></i>Inventario personale</span>
-        <span class="grp-link" onclick="openAddInv()">+ Aggiungi</span>
-      </div>
-      <div class="ios-list" id="inv-list" style="margin:0 16px 16px"></div>
+      
+      
     </div>
 
     <!-- ======= TRANSFER ======= -->
-    <div id="sec-transfer" class="sec">
-      <div class="xfer-card">
-        <div style="font-size:14px;color:var(--text3);margin-bottom:18px">Trasferisci file sulla rete Wi-Fi locale</div>
-        <div class="qr-box">
-          <i class="fas fa-qrcode" style="font-size:95px;color:#000"></i>
-        </div>
-        <div style="font-size:13px;color:var(--text3);margin-bottom:20px">Scansiona il codice con l'altro dispositivo</div>
-        <div class="btn-row">
-          <button class="ios-btn btn-blue" onclick="openReceive()"><i class="fas fa-download"></i> Ricevi</button>
-          <button class="ios-btn btn-fill" onclick="openSend()"><i class="fas fa-upload"></i> Invia</button>
-        </div>
-      </div>
-
-      <div class="grp-hdr first"><span>Trasferimenti recenti</span></div>
-      <div class="ios-list" style="margin:0 16px 16px">
-        <div class="ios-row">
-          <div class="row-ic" style="background:rgba(10,132,255,.15)"><i class="fas fa-image" style="color:var(--blue)"></i></div>
-          <div class="row-body">
-            <div class="row-title">Foto_Vacanza_2025.jpg</div>
-            <div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--green)"></div></div>
-            <div class="row-sub" style="margin-top:4px">4.2 MB · Da: iPhone Marco</div>
-          </div>
-          <span class="badge" style="background:rgba(48,209,88,.15);color:var(--green)"><i class="fas fa-check"></i></span>
-        </div>
-        <div class="ios-row">
-          <div class="row-ic" style="background:rgba(255,69,58,.15)"><i class="fas fa-file-pdf" style="color:var(--red)"></i></div>
-          <div class="row-body">
-            <div class="row-title">Contratto_Lavoro.pdf</div>
-            <div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--green)"></div></div>
-            <div class="row-sub" style="margin-top:4px">1.1 MB · Da: PC Casa</div>
-          </div>
-          <span class="badge" style="background:rgba(48,209,88,.15);color:var(--green)"><i class="fas fa-check"></i></span>
-        </div>
-        <div class="ios-row">
-          <div class="row-ic" style="background:rgba(191,90,242,.15)"><i class="fas fa-film" style="color:var(--purple)"></i></div>
-          <div class="row-body">
-            <div class="row-title">Video_Estate.mp4</div>
-            <div class="prog-bar"><div class="prog-fill" style="width:67%;background:var(--orange)"></div></div>
-            <div class="row-sub" style="margin-top:4px">67% · 2.3 MB/s · ~12s rimasti</div>
-          </div>
-          <span class="badge" style="background:rgba(255,159,10,.15);color:var(--orange)"><i class="fas fa-arrow-right-arrow-left"></i></span>
-        </div>
-      </div>
-    </div>
+  
 
     <!-- ======= SETTINGS ======= -->
     <div id="sec-settings" class="sec">
-      <div class="set-section">
-        <div class="set-title">Profilo</div>
-        <div class="set-list">
-          <div class="set-row" onclick="openEditName()">
-            <div class="set-ic" style="background:var(--blue)"><i class="fas fa-user"></i></div>
-            <div class="set-info"><div class="set-label">Nome utente</div><div class="set-sub" id="disp-name">Utente</div></div>
-            <i class="fas fa-chevron-right" style="color:var(--text4);font-size:12px"></i>
-          </div>
-        </div>
-      </div>
+      
 
       <div class="set-section">
         <div class="set-title">Backup e dati</div>
@@ -488,28 +430,7 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
       </div>
 
       <div class="set-section">
-        <div class="set-title">Privacy e sicurezza</div>
-        <div class="set-list">
-          <div class="set-row" style="cursor:default">
-            <div class="set-ic" style="background:var(--teal)"><i class="fas fa-shield-halved"></i></div>
-            <div class="set-info"><div class="set-label">100% locale</div><div class="set-sub">Nessun cloud, nessun account richiesto</div></div>
-            <i class="fas fa-check-circle" style="color:var(--green);font-size:17px"></i>
-          </div>
-          <div class="set-row" style="cursor:default">
-            <div class="set-ic" style="background:var(--indigo)"><i class="fas fa-database"></i></div>
-            <div class="set-info"><div class="set-label">Dati sul dispositivo</div><div class="set-sub">Salvati solo nel tuo browser (localStorage)</div></div>
-            <i class="fas fa-check-circle" style="color:var(--green);font-size:17px"></i>
-          </div>
-          <div class="set-row" style="cursor:default">
-            <div class="set-ic" style="background:var(--green)"><i class="fas fa-wifi"></i></div>
-            <div class="set-info"><div class="set-label">Funziona offline</div><div class="set-sub">Nessuna connessione richiesta</div></div>
-            <i class="fas fa-check-circle" style="color:var(--green);font-size:17px"></i>
-          </div>
-        </div>
-      </div>
-
-      <div class="set-section">
-        <div class="set-title">Zona pericolosa</div>
+        <div class="set-title">Formatta Dati</div>
         <div class="set-list">
           <div class="set-row" onclick="confirmDeleteAll()">
             <div class="set-ic" style="background:var(--red)"><i class="fas fa-trash-can"></i></div>
@@ -519,19 +440,7 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
         </div>
       </div>
 
-      <div class="set-section">
-        <div class="set-title">Informazioni</div>
-        <div class="set-list">
-          <div class="set-row" style="cursor:default">
-            <div class="set-ic" style="background:var(--purple)"><i class="fas fa-cube"></i></div>
-            <div class="set-info"><div class="set-label">Personal Hub</div><div class="set-sub">Versione 1.0 · Offline-first PWA</div></div>
-          </div>
-          <div class="set-row" style="cursor:default">
-            <div class="set-ic" style="background:var(--indigo)"><i class="fas fa-code"></i></div>
-            <div class="set-info"><div class="set-label">Tecnologie</div><div class="set-sub">HTML · CSS · JavaScript · localStorage</div></div>
-          </div>
-        </div>
-      </div>
+      
       <div style="height:8px"></div>
     </div>
 
@@ -547,7 +456,6 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
     <button class="nav-it" id="n-documents" onclick="nav('documents')"><i class="fas fa-folder-open"></i><span>Documenti</span></button>
     <button class="nav-it" id="n-tasks" onclick="nav('tasks')"><i class="fas fa-list-check"></i><span>Attività</span></button>
     <button class="nav-it" id="n-vehicles" onclick="nav('vehicles')"><i class="fas fa-car-side"></i><span>Garage</span></button>
-    <button class="nav-it" id="n-transfer" onclick="nav('transfer')"><i class="fas fa-wifi"></i><span>Transfer</span></button>
   </nav>
 
 </div><!-- /phone -->
@@ -1112,7 +1020,7 @@ function addDoc() {
 function openAddVehicle() {
   openModal('Nuovo veicolo', `
     <label class="flbl">Tipo</label>
-    <select class="fsel" id="f-tp"><option>Auto</option><option>Moto</option><option>Scooter</option><option>Camper</option></select>
+    <select class="fsel" id="f-tp"><option>Auto</option><option>Moto</option><option>Veicolo Aziendale</option></select>
     <label class="flbl">Marca e modello *</label>
     <input class="finp" id="f-n" type="text" placeholder="Es. Fiat Panda 1.2">
     <label class="flbl">Anno</label>
@@ -1270,7 +1178,7 @@ function confirmDeleteAll() {
       <i class="fas fa-triangle-exclamation" style="font-size:48px;color:var(--red);display:block;margin-bottom:14px"></i>
       <div style="font-size:17px;font-weight:600;margin-bottom:10px">Sei assolutamente sicuro?</div>
       <div style="font-size:14px;color:var(--text3);line-height:1.6;max-width:280px;margin:0 auto">
-        Verranno eliminati definitivamente tutte le attività, foto, documenti, veicoli e oggetti dell'inventario.<br><br>
+        Verranno eliminati definitivamente tutte le attività, foto, documenti, veicoli SOLO dell'applicazione<br><br>
         <strong style="color:var(--red)">Questa azione non può essere annullata.</strong>
       </div>
     </div>
