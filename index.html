@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Personal Hub">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Il tuo spazio personale digitale — foto, documenti, attività, veicoli e molto altro.">
+<title>Personal Hub</title>
+
+<!-- Font Awesome 6 (CDN) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- PWA Manifest inline via JS -->
+<link rel="manifest" id="manifest-link">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230a84ff'/><text y='.9em' font-size='70' x='12'>🏠</text></svg>">
+
+<style>
+/* ===== RESET & ROOT ===== */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#000;--bg2:#1c1c1e;--bg3:#2c2c2e;--bg4:#3a3a3c;
+  --sep:rgba(255,255,255,0.1);--sep2:rgba(255,255,255,0.06);
+  --blue:#0a84ff;--green:#30d158;--orange:#ff9f0a;--red:#ff453a;
+  --yellow:#ffd60a;--purple:#bf5af2;--teal:#5ac8fa;--indigo:#5e5ce6;
+  --text:#ffffff;--text2:rgba(235,235,245,0.85);--text3:rgba(235,235,245,0.55);--text4:rgba(235,235,245,0.28);
+  --fill:rgba(255,255,255,0.05);--fill2:rgba(255,255,255,0.09);
+  --r:13px;--r-sm:10px;--r-xs:8px;--r-pill:100px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+
+/* ===== PHONE SHELL ===== */
+.phone{
+  max-width:430px;margin:0 auto;height:100dvh;
+  display:flex;flex-direction:column;
+  background:var(--bg);position:relative;overflow:hidden;
+}
+
+/* ===== STATUS BAR ===== */
+.statusbar{
+  flex-shrink:0;
+  padding:calc(var(--safe-top) + 8px) 20px 6px;
+  display:flex;align-items:center;justify-content:space-between;
+  min-height:44px;
+}
+.sb-time{font-size:15px;font-weight:600;letter-spacing:-.2px}
+.sb-icons{display:flex;align-items:center;gap:5px;font-size:13px}
+
+/* ===== TOP BAR ===== */
+.topbar{
+  flex-shrink:0;padding:0 20px 10px;
+  display:flex;align-items:flex-end;justify-content:space-between;
+}
+.tb-left .tb-title{font-size:30px;font-weight:700;letter-spacing:-.6px;line-height:1}
+.tb-left .tb-sub{font-size:12px;color:var(--text3);margin-top:3px;letter-spacing:.3px;text-transform:uppercase}
+.tb-actions{display:flex;gap:8px;padding-bottom:4px}
+.tb-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--fill2);border:none;
+  color:var(--text3);font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .15s;
+}
+.tb-btn:active{transform:scale(.92);background:var(--fill)}
+
+/* ===== SCROLL AREA ===== */
+.scroll{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:calc(84px + var(--safe-bottom));
+  scroll-behavior:smooth;
+}
+.scroll::-webkit-scrollbar{display:none}
+
+/* ===== SECTIONS ===== */
+.sec{display:none;animation:fadeIn .2s ease}
+.sec.on{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== STAT GRID ===== */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 4px}
+.stat-card{background:var(--bg2);border-radius:var(--r);padding:16px}
+.stat-ic{font-size:22px;margin-bottom:8px}
+.stat-val{font-size:28px;font-weight:700;letter-spacing:-.5px;line-height:1}
+.stat-lbl{font-size:12px;color:var(--text3);margin-top:5px}
+
+/* ===== SECTION HEADER ===== */
+.grp-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 20px 9px;
+  font-size:12px;font-weight:600;color:var(--text3);
+  letter-spacing:.5px;text-transform:uppercase;
+}
+.grp-hdr.first{padding-top:10px}
+.grp-link{font-size:13px;font-weight:500;color:var(--blue);text-transform:none;letter-spacing:0;cursor:pointer}
+
+/* ===== IOS LIST ===== */
+.ios-list{margin:0 16px 12px;background:var(--bg2);border-radius:var(--r);overflow:hidden}
+.ios-row{
+  display:flex;align-items:center;gap:13px;padding:13px 16px;
+  border-bottom:.5px solid var(--sep2);cursor:pointer;
+  transition:background .1s;min-height:52px;
+}
+.ios-row:last-child{border-bottom:none}
+.ios-row:active{background:var(--fill)}
+.row-ic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.row-body{flex:1;min-width:0}
+.row-title{font-size:16px;color:var(--text);font-weight:400}
+.row-sub{font-size:13px;color:var(--text3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row-right{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.row-chev{color:var(--text4);font-size:12px}
+.badge{font-size:12px;font-weight:600;padding:3px 9px;border-radius:var(--r-pill);line-height:1.4;white-space:nowrap}
+
+/* ===== CHECK CIRCLE ===== */
+.chk{width:24px;height:24px;border-radius:50%;border:2px solid var(--sep);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .2s}
+.chk.done{background:var(--green);border-color:var(--green)}
+.chk.done i{display:block;font-size:11px;color:#fff}
+.chk:not(.done) i{display:none}
+
+/* ===== PHOTO GRID ===== */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:0 16px;border-radius:var(--r);overflow:hidden}
+.photo-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;transition:opacity .15s}
+.photo-cell:active{opacity:.7}
+
+/* ===== PILLS ===== */
+.pills{display:flex;gap:7px;padding:0 16px 14px;overflow-x:auto;scrollbar-width:none}
+.pills::-webkit-scrollbar{display:none}
+.pill{
+  padding:7px 17px;border-radius:var(--r-pill);font-size:13px;font-weight:500;
+  border:none;background:var(--fill2);color:var(--text3);
+  cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;
+}
+.pill.on{background:var(--blue);color:#fff}
+
+/* ===== VEHICLE CARD ===== */
+.veh-card{margin:0 16px 12px;background:var(--bg2);border-radius:var(--r);overflow:hidden;cursor:pointer}
+.veh-top{padding:16px 16px 8px;display:flex;justify-content:space-between;align-items:flex-start}
+.veh-name{font-size:19px;font-weight:600;letter-spacing:-.3px}
+.veh-model{font-size:13px;color:var(--text3);margin-top:3px}
+.veh-plate{background:var(--bg3);border-radius:7px;padding:5px 11px;font-size:13px;font-weight:700;font-family:monospace;letter-spacing:1.5px}
+.veh-emoji{font-size:56px;text-align:center;padding:6px 0 14px}
+.veh-stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:.5px solid var(--sep2)}
+.veh-stat{padding:12px 6px;text-align:center}
+.veh-stat+.veh-stat{border-left:.5px solid var(--sep2)}
+.veh-sv{font-size:15px;font-weight:600}
+.veh-sl{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* ===== DEADLINES ===== */
+.dl-row{display:flex;align-items:center;gap:13px;padding:12px 16px;border-bottom:.5px solid var(--sep2)}
+.dl-row:last-child{border-bottom:none}
+.dl-days{min-width:46px;text-align:center}
+.dl-num{font-size:22px;font-weight:700;line-height:1}
+.dl-lbl{font-size:10px;color:var(--text3);margin-top:2px}
+.dl-info{flex:1}
+.dl-name{font-size:15px;font-weight:500}
+.dl-date{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* ===== TRANSFER ===== */
+.xfer-card{margin:0 16px 12px;background:var(--bg2);border-radius:var(--r);padding:22px;text-align:center}
+.qr-box{width:160px;height:160px;background:#fff;border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
+.prog-bar{height:4px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;border-radius:4px}
+
+/* ===== SETTINGS ===== */
+.set-section{margin:0 16px 6px}
+.set-title{font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.4px;text-transform:uppercase;padding:16px 4px 8px}
+.set-list{background:var(--bg2);border-radius:var(--r);overflow:hidden}
+.set-row{display:flex;align-items:center;gap:13px;padding:14px 16px;border-bottom:.5px solid var(--sep2);cursor:pointer;transition:background .1s;min-height:52px}
+.set-row:last-child{border-bottom:none}
+.set-row:active{background:var(--fill)}
+.set-ic{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;flex-shrink:0}
+.set-info{flex:1}
+.set-label{font-size:16px;color:var(--text)}
+.set-sub{font-size:13px;color:var(--text3);margin-top:1px}
+
+/* ===== FAB ===== */
+.fab{
+  position:fixed;bottom:calc(88px + var(--safe-bottom));
+  right:calc(50% - 215px + 16px);
+  width:54px;height:54px;border-radius:50%;
+  background:var(--blue);color:#fff;font-size:22px;
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 18px rgba(10,132,255,.4);
+  transition:transform .15s;z-index:50;
+}
+.fab:active{transform:scale(.92)}
+@media(max-width:430px){.fab{right:16px}}
+
+/* ===== BOTTOM NAV ===== */
+.bnav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:430px;max-width:100%;
+  background:rgba(18,18,20,.92);
+  border-top:.5px solid var(--sep);
+  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  padding:8px 0 calc(10px + var(--safe-bottom));
+  display:flex;justify-content:space-around;z-index:100;
+}
+.nav-it{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 10px;border:none;background:none;min-width:52px}
+.nav-it i{font-size:22px;color:var(--text4);transition:color .2s}
+.nav-it span{font-size:10px;font-weight:500;color:var(--text4);transition:color .2s}
+.nav-it.on i,.nav-it.on span{color:var(--blue)}
+
+/* ===== MODAL ===== */
+.modal-wrap{
+  position:fixed;inset:0;background:rgba(0,0,0,.68);
+  z-index:200;display:none;align-items:flex-end;justify-content:center;
+}
+.modal-wrap.on{display:flex}
+.modal-sheet{
+  background:var(--bg2);border-radius:22px 22px 0 0;
+  width:100%;max-width:430px;
+  max-height:90dvh;overflow-y:auto;
+  padding:0 0 calc(28px + var(--safe-bottom));
+  animation:slideUp .25s cubic-bezier(.32,1,.6,1);
+}
+.modal-sheet::-webkit-scrollbar{display:none}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:38px;height:4px;background:var(--sep);border-radius:4px;margin:10px auto 14px}
+.modal-title{font-size:17px;font-weight:600;text-align:center;padding:0 20px 16px;color:var(--text)}
+.modal-body{padding:0 16px}
+
+/* ===== FORMS ===== */
+.flbl{font-size:13px;color:var(--text3);margin-bottom:6px;display:block;padding-left:4px}
+.finp{
+  width:100%;background:var(--bg3);border:none;color:var(--text);
+  padding:13px 14px;border-radius:var(--r-sm);font-size:16px;
+  outline:none;font-family:inherit;margin-bottom:14px;
+  -webkit-appearance:none;
+}
+.finp::placeholder{color:var(--text4)}
+.finp:focus{background:var(--bg4)}
+.fsel{
+  width:100%;background:var(--bg3);border:none;color:var(--text);
+  padding:13px 14px;border-radius:var(--r-sm);font-size:16px;
+  outline:none;font-family:inherit;margin-bottom:14px;
+  -webkit-appearance:none;appearance:none;
+}
+.btn-row{display:flex;gap:10px;margin-top:4px}
+.ios-btn{flex:1;padding:14px;border-radius:var(--r);font-size:16px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .15s}
+.ios-btn:active{transform:scale(.97)}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-red{background:var(--red);color:#fff}
+.btn-fill{background:var(--fill2);color:var(--text)}
+
+/* ===== EMPTY STATE ===== */
+.empty{text-align:center;padding:48px 20px}
+.empty i{font-size:40px;color:var(--text4);margin-bottom:14px;display:block}
+.empty p{font-size:15px;color:var(--text3)}
+
+/* ===== NOTIFICATION ===== */
+.notif{
+  position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-10px);
+  background:var(--bg2);border:.5px solid var(--sep);color:var(--text);
+  padding:11px 22px;border-radius:var(--r-pill);
+  font-size:14px;font-weight:500;z-index:500;
+  opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;
+  box-shadow:0 4px 24px rgba(0,0,0,.5);
+}
+.notif.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===== INSTALL BANNER ===== */
+.install-bar{
+  margin:0 16px 12px;background:linear-gradient(135deg,#1a2a4a,#0d1f3a);
+  border:1px solid rgba(10,132,255,.3);border-radius:var(--r);padding:14px 16px;
+  display:flex;align-items:center;gap:12px;cursor:pointer;
+}
+.install-bar .ib-icon{font-size:28px;flex-shrink:0}
+.install-bar .ib-text{flex:1}
+.install-bar .ib-title{font-size:14px;font-weight:600;color:var(--blue)}
+.install-bar .ib-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.install-bar .ib-close{font-size:18px;color:var(--text3);padding:4px}
+
+/* ===== RESPONSIVE ===== */
+@media(min-width:431px){.phone{border-left:1px solid var(--sep2);border-right:1px solid var(--sep2)}}
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- STATUS BAR -->
+  <div class="statusbar">
+    <span class="sb-time" id="clock">9:41</span>
+    <div class="sb-icons">
+      <i class="fas fa-signal"></i>
+      <i class="fas fa-wifi"></i>
+      <i class="fas fa-battery-three-quarters"></i>
+    </div>
+  </div>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="tb-title" id="tb-title">Personal Hub</div>
+      <div class="tb-sub" id="tb-sub">Il tuo spazio personale</div>
+    </div>
+    <div class="tb-actions">
+      <button class="tb-btn" onclick="openSearch()" aria-label="Cerca"><i class="fas fa-magnifying-glass"></i></button>
+      <button class="tb-btn" onclick="nav('settings')" aria-label="Impostazioni"><i class="fas fa-gear"></i></button>
+    </div>
+  </div>
+
+  <!-- SCROLL CONTENT -->
+  <div class="scroll" id="scroll">
+
+    <!-- ======= HOME ======= -->
+    <div id="sec-home" class="sec on">
+      <div id="install-banner" class="install-bar" onclick="installPWA()" style="display:none">
+        <div class="ib-icon"><i class="fas fa-download" style="color:var(--blue)"></i></div>
+        <div class="ib-text">
+          <div class="ib-title">Installa l'app</div>
+          <div class="ib-sub">Aggiungi alla schermata home per uso offline</div>
+        </div>
+        <div class="ib-close" onclick="event.stopPropagation();dismissInstall()"><i class="fas fa-xmark"></i></div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-ic"><i class="fas fa-list-check" style="color:var(--blue)"></i></div>
+          <div class="stat-val" id="s-tasks">0</div>
+          <div class="stat-lbl">Attività da fare</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-ic"><i class="fas fa-images" style="color:var(--green)"></i></div>
+          <div class="stat-val" id="s-photos">0</div>
+          <div class="stat-lbl">Foto archiviate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-ic"><i class="fas fa-file-lines" style="color:var(--orange)"></i></div>
+          <div class="stat-val" id="s-docs">0</div>
+          <div class="stat-lbl">Documenti</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-ic"><i class="fas fa-car-side" style="color:var(--purple)"></i></div>
+          <div class="stat-val" id="s-veh">0</div>
+          <div class="stat-lbl">Veicoli nel garage</div>
+        </div>
+      </div>
+
+      <div class="grp-hdr first"><span><i class="fas fa-triangle-exclamation" style="color:var(--orange);margin-right:6px"></i>Scadenze imminenti</span></div>
+      <div class="ios-list" id="home-deadlines"></div>
+
+      <div class="grp-hdr">
+        <span><i class="fas fa-bolt" style="color:var(--yellow);margin-right:6px"></i>Attività urgenti</span>
+        <span class="grp-link" onclick="nav('tasks')">Tutte <i class="fas fa-chevron-right" style="font-size:10px"></i></span>
+      </div>
+      <div class="ios-list" id="home-tasks"></div>
+
+      <div class="grp-hdr">
+        <span><i class="fas fa-images" style="color:var(--teal);margin-right:6px"></i>Ultime foto</span>
+        <span class="grp-link" onclick="nav('gallery')">Galleria <i class="fas fa-chevron-right" style="font-size:10px"></i></span>
+      </div>
+      <div id="home-photos" class="photo-grid"></div>
+      <div style="height:8px"></div>
+    </div>
+
+    <!-- ======= GALLERY ======= -->
+    <div id="sec-gallery" class="sec">
+      <div class="pills" id="gal-pills">
+        <button class="pill on" onclick="fGal('all',this)">Tutte</button>
+        <button class="pill" onclick="fGal('2025',this)">2025</button>
+        <button class="pill" onclick="fGal('2024',this)">2024</button>
+        <button class="pill" onclick="fGal('Viaggi',this)"><i class="fas fa-plane-departure"></i> Viaggi</button>
+        <button class="pill" onclick="fGal('Moto',this)"><i class="fas fa-motorcycle"></i> Moto</button>
+        <button class="pill" onclick="fGal('Auto',this)"><i class="fas fa-car"></i> Auto</button>
+        <button class="pill" onclick="fGal('Casa',this)"><i class="fas fa-house"></i> Casa</button>
+      </div>
+      <div style="padding:0 20px 10px;font-size:13px;color:var(--text3)" id="gal-count"></div>
+      <div class="photo-grid" id="gal-grid" style="border-radius:var(--r);overflow:hidden"></div>
+      <div style="height:8px"></div>
+    </div>
+
+    <!-- ======= DOCUMENTS ======= -->
+    <div id="sec-documents" class="sec">
+      <div class="pills">
+        <button class="pill on" onclick="fDocs('all',this)">Tutti</button>
+        <button class="pill" onclick="fDocs('Identità',this)"><i class="fas fa-id-card"></i> Identità</button>
+        <button class="pill" onclick="fDocs('Veicoli',this)"><i class="fas fa-car"></i> Veicoli</button>
+        <button class="pill" onclick="fDocs('Casa',this)"><i class="fas fa-house"></i> Casa</button>
+        <button class="pill" onclick="fDocs('Lavoro',this)"><i class="fas fa-briefcase"></i> Lavoro</button>
+        <button class="pill" onclick="fDocs('Contratti',this)"><i class="fas fa-file-contract"></i> Contratti</button>
+      </div>
+      <div class="ios-list" id="docs-list" style="margin:0 16px 16px"></div>
+    </div>
+
+    <!-- ======= TASKS ======= -->
+    <div id="sec-tasks" class="sec">
+      <div class="pills">
+        <button class="pill on" onclick="fTasks('active',this)">Da fare</button>
+        <button class="pill" onclick="fTasks('Alta',this)"><i class="fas fa-circle" style="color:var(--red)"></i> Alta</button>
+        <button class="pill" onclick="fTasks('Media',this)"><i class="fas fa-circle" style="color:var(--orange)"></i> Media</button>
+        <button class="pill" onclick="fTasks('Bassa',this)"><i class="fas fa-circle" style="color:var(--green)"></i> Bassa</button>
+        <button class="pill" onclick="fTasks('done',this)"><i class="fas fa-check"></i> Completate</button>
+      </div>
+      <div class="ios-list" id="tasks-list" style="margin:0 16px 16px"></div>
+    </div>
+
+    <!-- ======= VEHICLES ======= -->
+    <div id="sec-vehicles" class="sec">
+      <div id="veh-list"></div>
+      <div class="grp-hdr">
+        <span><i class="fas fa-box" style="color:var(--orange);margin-right:6px"></i>Inventario personale</span>
+        <span class="grp-link" onclick="openAddInv()">+ Aggiungi</span>
+      </div>
+      <div class="ios-list" id="inv-list" style="margin:0 16px 16px"></div>
+    </div>
+
+    <!-- ======= TRANSFER ======= -->
+    <div id="sec-transfer" class="sec">
+      <div class="xfer-card">
+        <div style="font-size:14px;color:var(--text3);margin-bottom:18px">Trasferisci file sulla rete Wi-Fi locale</div>
+        <div class="qr-box">
+          <i class="fas fa-qrcode" style="font-size:95px;color:#000"></i>
+        </div>
+        <div style="font-size:13px;color:var(--text3);margin-bottom:20px">Scansiona il codice con l'altro dispositivo</div>
+        <div class="btn-row">
+          <button class="ios-btn btn-blue" onclick="openReceive()"><i class="fas fa-download"></i> Ricevi</button>
+          <button class="ios-btn btn-fill" onclick="openSend()"><i class="fas fa-upload"></i> Invia</button>
+        </div>
+      </div>
+
+      <div class="grp-hdr first"><span>Trasferimenti recenti</span></div>
+      <div class="ios-list" style="margin:0 16px 16px">
+        <div class="ios-row">
+          <div class="row-ic" style="background:rgba(10,132,255,.15)"><i class="fas fa-image" style="color:var(--blue)"></i></div>
+          <div class="row-body">
+            <div class="row-title">Foto_Vacanza_2025.jpg</div>
+            <div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--green)"></div></div>
+            <div class="row-sub" style="margin-top:4px">4.2 MB · Da: iPhone Marco</div>
+          </div>
+          <span class="badge" style="background:rgba(48,209,88,.15);color:var(--green)"><i class="fas fa-check"></i></span>
+        </div>
+        <div class="ios-row">
+          <div class="row-ic" style="background:rgba(255,69,58,.15)"><i class="fas fa-file-pdf" style="color:var(--red)"></i></div>
+          <div class="row-body">
+            <div class="row-title">Contratto_Lavoro.pdf</div>
+            <div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--green)"></div></div>
+            <div class="row-sub" style="margin-top:4px">1.1 MB · Da: PC Casa</div>
+          </div>
+          <span class="badge" style="background:rgba(48,209,88,.15);color:var(--green)"><i class="fas fa-check"></i></span>
+        </div>
+        <div class="ios-row">
+          <div class="row-ic" style="background:rgba(191,90,242,.15)"><i class="fas fa-film" style="color:var(--purple)"></i></div>
+          <div class="row-body">
+            <div class="row-title">Video_Estate.mp4</div>
+            <div class="prog-bar"><div class="prog-fill" style="width:67%;background:var(--orange)"></div></div>
+            <div class="row-sub" style="margin-top:4px">67% · 2.3 MB/s · ~12s rimasti</div>
+          </div>
+          <span class="badge" style="background:rgba(255,159,10,.15);color:var(--orange)"><i class="fas fa-arrow-right-arrow-left"></i></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======= SETTINGS ======= -->
+    <div id="sec-settings" class="sec">
+      <div class="set-section">
+        <div class="set-title">Profilo</div>
+        <div class="set-list">
+          <div class="set-row" onclick="openEditName()">
+            <div class="set-ic" style="background:var(--blue)"><i class="fas fa-user"></i></div>
+            <div class="set-info"><div class="set-label">Nome utente</div><div class="set-sub" id="disp-name">Utente</div></div>
+            <i class="fas fa-chevron-right" style="color:var(--text4);font-size:12px"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="set-section">
+        <div class="set-title">Backup e dati</div>
+        <div class="set-list">
+          <div class="set-row" onclick="exportBackup()">
+            <div class="set-ic" style="background:var(--green)"><i class="fas fa-arrow-down-to-bracket"></i></div>
+            <div class="set-info"><div class="set-label">Esporta backup</div><div class="set-sub">Scarica PersonalHub_Backup.json</div></div>
+            <i class="fas fa-chevron-right" style="color:var(--text4);font-size:12px"></i>
+          </div>
+          <div class="set-row" onclick="document.getElementById('imp-inp').click()">
+            <div class="set-ic" style="background:var(--orange)"><i class="fas fa-arrow-up-from-bracket"></i></div>
+            <div class="set-info"><div class="set-label">Importa backup</div><div class="set-sub">Ripristina da file JSON</div></div>
+            <i class="fas fa-chevron-right" style="color:var(--text4);font-size:12px"></i>
+          </div>
+          <input type="file" id="imp-inp" style="display:none" accept=".json" onchange="importBackup(this)">
+        </div>
+      </div>
+
+      <div class="set-section">
+        <div class="set-title">Privacy e sicurezza</div>
+        <div class="set-list">
+          <div class="set-row" style="cursor:default">
+            <div class="set-ic" style="background:var(--teal)"><i class="fas fa-shield-halved"></i></div>
+            <div class="set-info"><div class="set-label">100% locale</div><div class="set-sub">Nessun cloud, nessun account richiesto</div></div>
+            <i class="fas fa-check-circle" style="color:var(--green);font-size:17px"></i>
+          </div>
+          <div class="set-row" style="cursor:default">
+            <div class="set-ic" style="background:var(--indigo)"><i class="fas fa-database"></i></div>
+            <div class="set-info"><div class="set-label">Dati sul dispositivo</div><div class="set-sub">Salvati solo nel tuo browser (localStorage)</div></div>
+            <i class="fas fa-check-circle" style="color:var(--green);font-size:17px"></i>
+          </div>
+          <div class="set-row" style="cursor:default">
+            <div class="set-ic" style="background:var(--green)"><i class="fas fa-wifi"></i></div>
+            <div class="set-info"><div class="set-label">Funziona offline</div><div class="set-sub">Nessuna connessione richiesta</div></div>
+            <i class="fas fa-check-circle" style="color:var(--green);font-size:17px"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="set-section">
+        <div class="set-title">Zona pericolosa</div>
+        <div class="set-list">
+          <div class="set-row" onclick="confirmDeleteAll()">
+            <div class="set-ic" style="background:var(--red)"><i class="fas fa-trash-can"></i></div>
+            <div class="set-info"><div class="set-label" style="color:var(--red)">Elimina tutti i dati</div><div class="set-sub">Azione permanente e irreversibile</div></div>
+            <i class="fas fa-chevron-right" style="color:var(--text4);font-size:12px"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="set-section">
+        <div class="set-title">Informazioni</div>
+        <div class="set-list">
+          <div class="set-row" style="cursor:default">
+            <div class="set-ic" style="background:var(--purple)"><i class="fas fa-cube"></i></div>
+            <div class="set-info"><div class="set-label">Personal Hub</div><div class="set-sub">Versione 1.0 · Offline-first PWA</div></div>
+          </div>
+          <div class="set-row" style="cursor:default">
+            <div class="set-ic" style="background:var(--indigo)"><i class="fas fa-code"></i></div>
+            <div class="set-info"><div class="set-label">Tecnologie</div><div class="set-sub">HTML · CSS · JavaScript · localStorage</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="height:8px"></div>
+    </div>
+
+  </div><!-- /scroll -->
+
+  <!-- FAB -->
+  <button class="fab" id="fab" onclick="openAdd()" aria-label="Aggiungi elemento"><i class="fas fa-plus"></i></button>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bnav">
+    <button class="nav-it on" id="n-home" onclick="nav('home')"><i class="fas fa-house"></i><span>Home</span></button>
+    <button class="nav-it" id="n-gallery" onclick="nav('gallery')"><i class="fas fa-images"></i><span>Foto</span></button>
+    <button class="nav-it" id="n-documents" onclick="nav('documents')"><i class="fas fa-folder-open"></i><span>Documenti</span></button>
+    <button class="nav-it" id="n-tasks" onclick="nav('tasks')"><i class="fas fa-list-check"></i><span>Attività</span></button>
+    <button class="nav-it" id="n-vehicles" onclick="nav('vehicles')"><i class="fas fa-car-side"></i><span>Garage</span></button>
+    <button class="nav-it" id="n-transfer" onclick="nav('transfer')"><i class="fas fa-wifi"></i><span>Transfer</span></button>
+  </nav>
+
+</div><!-- /phone -->
+
+<!-- MODAL -->
+<div class="modal-wrap" id="modal" onclick="closeModal(event)">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="m-title"></div>
+    <div class="modal-body" id="m-body"></div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+/* ==============================
+   DATA — default demo dataset
+   ============================== */
+const DEFAULT = {
+  name: 'Utente',
+  tasks: [
+    {id:1,title:'Prenotare tagliando Fiat Panda',desc:'Cambio olio + filtri aria',priority:'Alta',due:'2026-07-01',cat:'Veicoli',done:false},
+    {id:2,title:'Rinnovare assicurazione moto',desc:'Confrontare preventivi online',priority:'Alta',due:'2026-07-05',cat:'Veicoli',done:false},
+    {id:3,title:'Comprare pneumatici invernali',desc:'Misura 205/55 R16',priority:'Media',due:'2026-08-15',cat:'Auto',done:false},
+    {id:4,title:'Backup foto vacanza',desc:'Copia su hard disk esterno',priority:'Bassa',due:'2026-07-20',cat:'Foto',done:false},
+    {id:5,title:'Pagare bolletta luce',desc:'',priority:'Alta',due:'2026-06-30',cat:'Casa',done:true},
+    {id:6,title:'Portare moto dal meccanico',desc:'Freno posteriore da controllare',priority:'Media',due:'2026-07-10',cat:'Moto',done:false},
+  ],
+  photos: [
+    {id:1,ic:'fa-sun',name:'Tramonto_Rimini.jpg',date:'2025-08-14',album:'Viaggi',tag:'mare',col:'#ff9f0a'},
+    {id:2,ic:'fa-motorcycle',name:'Honda_CBR.jpg',date:'2025-06-20',album:'Moto',tag:'moto',col:'#bf5af2'},
+    {id:3,ic:'fa-landmark',name:'Roma_Colosseo.jpg',date:'2024-11-03',album:'Viaggi',tag:'storia',col:'#ff9f0a'},
+    {id:4,ic:'fa-pizza-slice',name:'Pizza_Napoletana.jpg',date:'2025-03-18',album:'Viaggi',tag:'cibo',col:'#ff453a'},
+    {id:5,ic:'fa-car',name:'Fiat_Panda.jpg',date:'2025-01-10',album:'Auto',tag:'auto',col:'#30d158'},
+    {id:6,ic:'fa-water',name:'Mare_Sardegna.jpg',date:'2024-07-22',album:'Viaggi',tag:'mare',col:'#5ac8fa'},
+    {id:7,ic:'fa-mountain',name:'Dolomiti_2024.jpg',date:'2024-07-15',album:'Viaggi',tag:'montagna',col:'#30d158'},
+    {id:8,ic:'fa-dog',name:'Cane_Luna.jpg',date:'2025-04-05',album:'Casa',tag:'animali',col:'#ff9f0a'},
+    {id:9,ic:'fa-guitar',name:'Concerto_Rock.jpg',date:'2025-05-30',album:'Viaggi',tag:'musica',col:'#bf5af2'},
+    {id:10,ic:'fa-leaf',name:'Giardino_Casa.jpg',date:'2025-03-01',album:'Casa',tag:'casa',col:'#30d158'},
+    {id:11,ic:'fa-utensils',name:'Pasta_Bolognese.jpg',date:'2025-02-14',album:'Casa',tag:'cibo',col:'#ff9f0a'},
+    {id:12,ic:'fa-tent',name:'Camping_Toscana.jpg',date:'2024-08-10',album:'Viaggi',tag:'natura',col:'#5ac8fa'},
+  ],
+  docs: [
+    {id:1,ic:'fa-id-card',title:"Carta d'Identità",cat:'Identità',date:'2021-10-15',exp:'2031-10-14',note:'Valida per espatrio UE',icCol:'#0a84ff'},
+    {id:2,ic:'fa-passport',title:'Passaporto',cat:'Identità',date:'2020-03-20',exp:'2030-03-19',note:'',icCol:'#0a84ff'},
+    {id:3,ic:'fa-car',title:'Patente di guida B',cat:'Identità',date:'2018-06-10',exp:'2028-06-09',note:'Rinnovo con visita medica',icCol:'#30d158'},
+    {id:4,ic:'fa-file-lines',title:'Libretto Fiat Panda',cat:'Veicoli',date:'2022-04-15',exp:null,note:'Telaio: ZFA31200...',icCol:'#bf5af2'},
+    {id:5,ic:'fa-shield-halved',title:'Polizza Assicurazione Auto',cat:'Veicoli',date:'2025-07-01',exp:'2026-07-06',note:'AXA — Kasko totale',icCol:'#ff453a'},
+    {id:6,ic:'fa-house',title:'Contratto di Affitto',cat:'Casa',date:'2023-09-01',exp:'2025-09-01',note:'Rinnovabile annualmente',icCol:'#ff9f0a'},
+    {id:7,ic:'fa-briefcase',title:'Contratto di Lavoro',cat:'Lavoro',date:'2022-01-15',exp:null,note:'Tempo indeterminato',icCol:'#5ac8fa'},
+    {id:8,ic:'fa-tv',title:'Garanzia TV Samsung',cat:'Contratti',date:'2024-12-20',exp:'2026-12-19',note:'2 anni di garanzia',icCol:'#5e5ce6'},
+  ],
+  vehicles: [
+    {id:1,emoji:'🚗',ic:'fa-car-side',name:'Fiat Panda',model:'1.2 Lounge',year:2018,plate:'AB 123 CD',km:67430,fuel:'Benzina',
+     maint:[
+       {date:'2025-11-15',km:65000,type:'Tagliando',cost:280,note:'Olio + filtri'},
+       {date:'2024-08-20',km:58000,type:'Pneumatici',cost:420,note:'4 gomme Michelin'}
+     ],
+     dl:[
+       {name:'Assicurazione',date:'2026-07-06'},
+       {name:'Bollo',date:'2026-09-30'},
+       {name:'Revisione',date:'2027-04-15'}
+     ]},
+    {id:2,emoji:'🏍️',ic:'fa-motorcycle',name:'Honda CBR 600',model:'CBR 600RR',year:2015,plate:'EF 456 GH',km:32100,fuel:'Benzina',
+     maint:[
+       {date:'2025-04-10',km:31000,type:'Tagliando',cost:190,note:'Candele + filtro aria'}
+     ],
+     dl:[
+       {name:'Assicurazione',date:'2026-10-15'},
+       {name:'Revisione',date:'2026-07-22'}
+     ]},
+  ],
+  inventory: [
+    {id:1,ic:'fa-camera',name:'Sony A7 III',cat:'Fotocamera',price:2199,year:2022,warranty:'2024-12-20',col:'#ff9f0a'},
+    {id:2,ic:'fa-laptop',name:'MacBook Pro 14"',cat:'Computer',price:2199,year:2023,warranty:'2026-01-10',col:'#888'},
+    {id:3,ic:'fa-headphones',name:'Sony WH-1000XM5',cat:'Audio',price:350,year:2023,warranty:'2025-06-05',col:'#0a84ff'},
+    {id:4,ic:'fa-mobile-screen',name:'iPhone 14 Pro',cat:'Smartphone',price:1299,year:2022,warranty:'2024-10-15',col:'#30d158'},
+  ]
+};
+
+/* ==============================
+   STATE
+   ============================== */
+let D = JSON.parse(JSON.stringify(DEFAULT));
+let curSec = 'home', curGal = 'all', curDocs = 'all', curTasks = 'active';
+let deferredInstall = null;
+
+/* ==============================
+   PERSISTENCE
+   ============================== */
+function save() {
+  try { localStorage.setItem('ph_v2', JSON.stringify(D)); } catch(e) {}
+}
+function load() {
+  try {
+    const s = localStorage.getItem('ph_v2');
+    if (s) D = JSON.parse(s);
+  } catch(e) {}
+}
+
+/* ==============================
+   UTILS
+   ============================== */
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d + 'T00:00:00');
+  return dt.toLocaleDateString('it-IT', {day:'numeric', month:'short', year:'numeric'});
+}
+function daysLeft(d) {
+  return Math.max(0, Math.ceil((new Date(d) - new Date()) / 864e5));
+}
+function daysColor(d) {
+  const n = daysLeft(d);
+  return n < 30 ? 'var(--red)' : n < 90 ? 'var(--orange)' : 'var(--green)';
+}
+function prioColor(p) {
+  return {Alta:'var(--red)', Media:'var(--orange)', Bassa:'var(--green)'}[p] || 'var(--text3)';
+}
+function updateClock() {
+  const n = new Date();
+  document.getElementById('clock').textContent = n.getHours() + ':' + String(n.getMinutes()).padStart(2,'0');
+}
+
+/* ==============================
+   NOTIFICATION
+   ============================== */
+function notif(msg) {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.classList.add('on');
+  setTimeout(() => el.classList.remove('on'), 2600);
+}
+
+/* ==============================
+   NAVIGATION
+   ============================== */
+const NAV_META = {
+  home:      {t:'Personal Hub',  s:'Il tuo spazio personale'},
+  gallery:   {t:'Foto',         s:'La tua galleria personale'},
+  documents: {t:'Documenti',    s:'Archivio digitale'},
+  tasks:     {t:'Attività',     s:'Cose da fare'},
+  vehicles:  {t:'Garage',       s:'I tuoi veicoli'},
+  transfer:  {t:'Transfer',     s:'Condivisione Wi-Fi locale'},
+  settings:  {t:'Impostazioni', s:'Preferenze e privacy'},
+};
+
+function nav(s) {
+  document.querySelectorAll('.sec').forEach(el => el.classList.remove('on'));
+  document.querySelectorAll('.nav-it').forEach(el => el.classList.remove('on'));
+  const sec = document.getElementById('sec-' + s);
+  if (sec) sec.classList.add('on');
+  const ni = document.getElementById('n-' + s);
+  if (ni) ni.classList.add('on');
+  const m = NAV_META[s] || NAV_META.home;
+  document.getElementById('tb-title').textContent = m.t;
+  document.getElementById('tb-sub').textContent = m.s;
+  document.getElementById('fab').style.display = ['settings','transfer'].includes(s) ? 'none' : 'flex';
+  curSec = s;
+  document.getElementById('scroll').scrollTop = 0;
+  renderSec(s);
+}
+
+function renderSec(s) {
+  if      (s === 'home')      renderHome();
+  else if (s === 'gallery')   renderGallery(curGal);
+  else if (s === 'documents') renderDocs(curDocs);
+  else if (s === 'tasks')     renderTasks(curTasks);
+  else if (s === 'vehicles')  renderVehicles();
+}
+
+/* ==============================
+   HOME
+   ============================== */
+function renderHome() {
+  document.getElementById('s-tasks').textContent  = D.tasks.filter(t => !t.done).length;
+  document.getElementById('s-photos').textContent = D.photos.length;
+  document.getElementById('s-docs').textContent   = D.docs.length;
+  document.getElementById('s-veh').textContent    = D.vehicles.length;
+  document.getElementById('disp-name').textContent = D.name || 'Utente';
+
+  // Deadlines aggregation
+  const deadlines = [];
+  D.vehicles.forEach(v => v.dl.forEach(dl => deadlines.push({name: dl.name + ' — ' + v.name, date: dl.date})));
+  D.docs.filter(d => d.exp).forEach(d => deadlines.push({name: d.title, date: d.exp}));
+  deadlines.sort((a,b) => daysLeft(a.date) - daysLeft(b.date));
+
+  const hd = document.getElementById('home-deadlines');
+  hd.innerHTML = deadlines.slice(0,4).map(dl => `
+    <div class="dl-row">
+      <div class="dl-days">
+        <div class="dl-num" style="color:${daysColor(dl.date)}">${daysLeft(dl.date)}</div>
+        <div class="dl-lbl">giorni</div>
+      </div>
+      <div class="dl-info">
+        <div class="dl-name">${dl.name}</div>
+        <div class="dl-date">Scade ${fmtDate(dl.date)}</div>
+      </div>
+    </div>`).join('') || emptyHTML('fa-calendar-check', 'Nessuna scadenza imminente');
+
+  // Urgent tasks
+  const urg = D.tasks.filter(t => !t.done && t.priority === 'Alta').slice(0,3);
+  const ht = document.getElementById('home-tasks');
+  ht.innerHTML = urg.length ? urg.map(t => taskRow(t)).join('') : emptyHTML('fa-party-horn', 'Nessuna attività urgente!');
+  attachTaskChecks(ht, () => renderHome());
+
+  // Recent photos
+  document.getElementById('home-photos').innerHTML = D.photos.slice(0,6).map(p =>
+    `<div class="photo-cell" onclick="nav('gallery')" style="background:${p.col}22">
+      <i class="fas ${p.ic}" style="color:${p.col};font-size:26px"></i>
+    </div>`).join('');
+}
+
+/* ==============================
+   TASKS
+   ============================== */
+function taskRow(t) {
+  const pc = prioColor(t.priority);
+  return `<div class="ios-row" onclick="showTaskDetail(${t.id})">
+    <div class="chk ${t.done ? 'done' : ''}" data-id="${t.id}"><i class="fas fa-check"></i></div>
+    <div class="row-body">
+      <div class="row-title" style="${t.done ? 'opacity:.4;text-decoration:line-through' : ''}">${t.title}</div>
+      <div class="row-sub">${t.cat} · ${fmtDate(t.due)}</div>
+    </div>
+    <span class="badge" style="background:${pc}22;color:${pc}">${t.priority}</span>
+  </div>`;
+}
+
+function attachTaskChecks(container, onToggle) {
+  container.querySelectorAll('.chk').forEach(el => {
+    el.onclick = e => {
+      e.stopPropagation();
+      const t = D.tasks.find(x => x.id === +el.dataset.id);
+      if (t) { t.done = !t.done; save(); onToggle(); }
+    };
+  });
+}
+
+function renderTasks(f) {
+  curTasks = f;
+  let list;
+  if      (f === 'done')   list = D.tasks.filter(t => t.done);
+  else if (f === 'active') list = D.tasks.filter(t => !t.done);
+  else                     list = D.tasks.filter(t => !t.done && t.priority === f);
+  const el = document.getElementById('tasks-list');
+  el.innerHTML = list.length ? list.map(t => taskRow(t)).join('') : emptyHTML('fa-check-double', 'Nessuna attività qui');
+  attachTaskChecks(el, () => renderTasks(curTasks));
+}
+
+function fTasks(f, btn) {
+  document.querySelectorAll('#sec-tasks .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  renderTasks(f);
+}
+
+function showTaskDetail(id) {
+  const t = D.tasks.find(x => x.id === id); if (!t) return;
+  const pc = prioColor(t.priority);
+  openModal(t.title, `
+    <div class="ios-list" style="margin-bottom:14px">
+      <div class="ios-row"><div class="row-ic" style="background:${pc}22"><i class="fas fa-flag" style="color:${pc}"></i></div><div class="row-body"><div class="row-sub">Priorità</div><div class="row-title">${t.priority}</div></div></div>
+      <div class="ios-row"><div class="row-ic" style="background:rgba(10,132,255,.15)"><i class="fas fa-calendar" style="color:var(--blue)"></i></div><div class="row-body"><div class="row-sub">Scadenza</div><div class="row-title">${fmtDate(t.due)}</div></div></div>
+      <div class="ios-row"><div class="row-ic" style="background:rgba(48,209,88,.15)"><i class="fas fa-tag" style="color:var(--green)"></i></div><div class="row-body"><div class="row-sub">Categoria</div><div class="row-title">${t.cat}</div></div></div>
+      ${t.desc ? `<div class="ios-row"><div class="row-ic" style="background:rgba(90,200,250,.15)"><i class="fas fa-note-sticky" style="color:var(--teal)"></i></div><div class="row-body"><div class="row-sub">Note</div><div class="row-title">${t.desc}</div></div></div>` : ''}
+    </div>
+    <div class="btn-row">
+      <button class="ios-btn btn-red" onclick="deleteTask(${t.id})"><i class="fas fa-trash"></i> Elimina</button>
+      <button class="ios-btn btn-fill" onclick="closeModal()">Chiudi</button>
+    </div>`);
+}
+
+function deleteTask(id) {
+  D.tasks = D.tasks.filter(t => t.id !== id);
+  save(); closeModal(); renderTasks(curTasks);
+}
+
+/* ==============================
+   GALLERY
+   ============================== */
+function renderGallery(f) {
+  curGal = f;
+  const list = (f && f !== 'all') ? D.photos.filter(p => {
+    if (f === '2025') return p.date.startsWith('2025');
+    if (f === '2024') return p.date.startsWith('2024');
+    return p.album === f;
+  }) : D.photos;
+  document.getElementById('gal-count').textContent = list.length + ' foto';
+  document.getElementById('gal-grid').innerHTML = list.map(p =>
+    `<div class="photo-cell" onclick="showPhoto(${p.id})" style="background:${p.col}22">
+      <i class="fas ${p.ic}" style="color:${p.col};font-size:26px"></i>
+    </div>`).join('') || emptyHTML('fa-images', 'Nessuna foto in questa categoria');
+}
+
+function fGal(f, btn) {
+  document.querySelectorAll('#gal-pills .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  renderGallery(f);
+}
+
+function showPhoto(id) {
+  const p = D.photos.find(x => x.id === id); if (!p) return;
+  openModal(p.name, `
+    <div style="text-align:center;padding:20px 0 24px;background:${p.col}18;border-radius:12px;margin-bottom:16px">
+      <i class="fas ${p.ic}" style="font-size:60px;color:${p.col}"></i>
+    </div>
+    <div class="ios-list" style="margin-bottom:14px">
+      <div class="ios-row"><div class="row-body"><div class="row-sub">Nome file</div><div class="row-title">${p.name}</div></div></div>
+      <div class="ios-row"><div class="row-body"><div class="row-sub">Data</div><div class="row-title">${fmtDate(p.date)}</div></div></div>
+      <div class="ios-row"><div class="row-body"><div class="row-sub">Album</div><div class="row-title">${p.album}</div></div></div>
+      <div class="ios-row"><div class="row-body"><div class="row-sub">Tag</div><div class="row-title">#${p.tag}</div></div></div>
+    </div>
+    <div class="btn-row">
+      <button class="ios-btn btn-red" onclick="deletePhoto(${p.id})"><i class="fas fa-trash"></i> Elimina</button>
+      <button class="ios-btn btn-fill" onclick="closeModal()">Chiudi</button>
+    </div>`);
+}
+
+function deletePhoto(id) {
+  D.photos = D.photos.filter(p => p.id !== id);
+  save(); closeModal(); renderGallery(curGal);
+}
+
+/* ==============================
+   DOCUMENTS
+   ============================== */
+function renderDocs(f) {
+  curDocs = f;
+  const list = (f && f !== 'all') ? D.docs.filter(d => d.cat === f) : D.docs;
+  document.getElementById('docs-list').innerHTML = list.map(d => `
+    <div class="ios-row" onclick="showDoc(${d.id})">
+      <div class="row-ic" style="background:${d.icCol}22"><i class="fas ${d.ic}" style="color:${d.icCol}"></i></div>
+      <div class="row-body">
+        <div class="row-title">${d.title}</div>
+        <div class="row-sub">${d.cat}${d.exp ? ' · Scade ' + fmtDate(d.exp) : ''}</div>
+      </div>
+      ${d.exp ? `<span style="font-size:12px;font-weight:700;color:${daysColor(d.exp)}">${daysLeft(d.exp)}g</span>` : ''}
+      <i class="fas fa-chevron-right row-chev"></i>
+    </div>`).join('') || emptyHTML('fa-folder-open', 'Nessun documento');
+}
+
+function fDocs(f, btn) {
+  document.querySelectorAll('#sec-documents .pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  renderDocs(f);
+}
+
+function showDoc(id) {
+  const d = D.docs.find(x => x.id === id); if (!d) return;
+  openModal(d.title, `
+    <div style="text-align:center;padding:18px 0 22px;background:${d.icCol}15;border-radius:12px;margin-bottom:16px">
+      <i class="fas ${d.ic}" style="font-size:52px;color:${d.icCol}"></i>
+    </div>
+    <div class="ios-list" style="margin-bottom:14px">
+      <div class="ios-row"><div class="row-body"><div class="row-sub">Categoria</div><div class="row-title">${d.cat}</div></div></div>
+      <div class="ios-row"><div class="row-body"><div class="row-sub">Caricato il</div><div class="row-title">${fmtDate(d.date)}</div></div></div>
+      ${d.exp ? `<div class="ios-row"><div class="row-body"><div class="row-sub">Scadenza</div><div class="row-title" style="color:${daysColor(d.exp)}">${fmtDate(d.exp)} · ${daysLeft(d.exp)} giorni rimasti</div></div></div>` : ''}
+      ${d.note ? `<div class="ios-row"><div class="row-body"><div class="row-sub">Note</div><div class="row-title">${d.note}</div></div></div>` : ''}
+    </div>
+    <div class="btn-row">
+      <button class="ios-btn btn-red" onclick="deleteDoc(${d.id})"><i class="fas fa-trash"></i> Elimina</button>
+      <button class="ios-btn btn-fill" onclick="closeModal()">Chiudi</button>
+    </div>`);
+}
+
+function deleteDoc(id) {
+  D.docs = D.docs.filter(d => d.id !== id);
+  save(); closeModal(); renderDocs(curDocs);
+}
+
+/* ==============================
+   VEHICLES
+   ============================== */
+function renderVehicles() {
+  document.getElementById('veh-list').innerHTML = D.vehicles.map(v => `
+    <div class="veh-card" onclick="showVeh(${v.id})">
+      <div class="veh-top">
+        <div><div class="veh-name">${v.name}</div><div class="veh-model">${v.model} · ${v.year}</div></div>
+        <div class="veh-plate">${v.plate}</div>
+      </div>
+      <div class="veh-emoji">${v.emoji}</div>
+      <div class="veh-stats">
+        <div class="veh-stat"><div class="veh-sv">${v.km.toLocaleString('it-IT')}</div><div class="veh-sl">km totali</div></div>
+        <div class="veh-stat"><div class="veh-sv" style="color:${daysColor(v.dl[0].date)}">${daysLeft(v.dl[0].date)}g</div><div class="veh-sl">${v.dl[0].name}</div></div>
+        <div class="veh-stat"><div class="veh-sv">€${v.maint.reduce((s,m) => s+m.cost, 0).toLocaleString('it-IT')}</div><div class="veh-sl">speso</div></div>
+      </div>
+    </div>`).join('') || emptyHTML('fa-car-side', 'Nessun veicolo aggiunto');
+  renderInventory();
+}
+
+function showVeh(id) {
+  const v = D.vehicles.find(x => x.id === id); if (!v) return;
+  openModal(v.name, `
+    <div style="font-size:56px;text-align:center;padding:4px 0 16px">${v.emoji}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+      ${[['Modello',v.model],['Anno',v.year],['Km',v.km.toLocaleString('it-IT')],['Carburante',v.fuel]].map(([l,val]) =>
+        `<div class="ios-list" style="margin:0"><div class="ios-row"><div class="row-body"><div class="row-sub">${l}</div><div class="row-title" style="font-size:15px">${val}</div></div></div></div>`
+      ).join('')}
+    </div>
+    <p style="font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.4px;padding:0 4px 8px;text-transform:uppercase">Scadenze</p>
+    <div class="ios-list" style="margin-bottom:14px">
+      ${v.dl.map(dl => `
+        <div class="ios-row">
+          <div class="row-ic" style="background:${daysColor(dl.date)}22"><i class="fas fa-calendar-xmark" style="color:${daysColor(dl.date)}"></i></div>
+          <div class="row-body"><div class="row-sub">${dl.name}</div><div class="row-title">${fmtDate(dl.date)}</div></div>
+          <span style="font-weight:700;font-size:14px;color:${daysColor(dl.date)}">${daysLeft(dl.date)}g</span>
+        </div>`).join('')}
+    </div>
+    <p style="font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.4px;padding:0 4px 8px;text-transform:uppercase">Manutenzioni</p>
+    <div class="ios-list" style="margin-bottom:14px">
+      ${v.maint.length ? v.maint.map(m => `
+        <div class="ios-row">
+          <div class="row-ic" style="background:rgba(191,90,242,.15)"><i class="fas fa-wrench" style="color:var(--purple)"></i></div>
+          <div class="row-body"><div class="row-sub">${fmtDate(m.date)} · ${m.km.toLocaleString('it-IT')} km</div><div class="row-title">${m.type} — ${m.note}</div></div>
+          <span style="font-weight:700;color:var(--orange)">€${m.cost}</span>
+        </div>`).join('') : '<div class="ios-row"><div class="row-body"><div class="row-title" style="color:var(--text3)">Nessuna manutenzione registrata</div></div></div>'}
+    </div>
+    <button class="ios-btn btn-fill" style="width:100%" onclick="closeModal()">Chiudi</button>`);
+}
+
+/* ==============================
+   INVENTORY
+   ============================== */
+function renderInventory() {
+  const el = document.getElementById('inv-list'); if (!el) return;
+  el.innerHTML = D.inventory.map(i => `
+    <div class="ios-row" onclick="showInv(${i.id})">
+      <div class="row-ic" style="background:${i.col}22"><i class="fas ${i.ic}" style="color:${i.col};font-size:16px"></i></div>
+      <div class="row-body"><div class="row-title">${i.name}</div><div class="row-sub">${i.cat} · ${i.year}</div></div>
+      <span style="font-size:14px;font-weight:700;color:var(--blue)">€${i.price.toLocaleString('it-IT')}</span>
+      <i class="fas fa-chevron-right row-chev"></i>
+    </div>`).join('') || emptyHTML('fa-box', 'Nessun oggetto inventariato');
+}
+
+function showInv(id) {
+  const i = D.inventory.find(x => x.id === id); if (!i) return;
+  openModal(i.name, `
+    <div style="text-align:center;padding:18px 0 22px;background:${i.col}18;border-radius:12px;margin-bottom:16px">
+      <i class="fas ${i.ic}" style="font-size:52px;color:${i.col}"></i>
+    </div>
+    <div class="ios-list" style="margin-bottom:14px">
+      <div class="ios-row"><div class="row-body"><div class="row-sub">Categoria</div><div class="row-title">${i.cat}</div></div></div>
+      <div class="ios-row"><div class="row-body"><div class="row-sub">Prezzo acquisto</div><div class="row-title" style="color:var(--blue);font-weight:700;font-size:18px">€${i.price.toLocaleString('it-IT')}</div></div></div>
+      <div class="ios-row"><div class="row-body"><div class="row-sub">Anno acquisto</div><div class="row-title">${i.year}</div></div></div>
+      <div class="ios-row"><div class="row-body"><div class="row-sub">Garanzia fino al</div><div class="row-title" style="color:${daysColor(i.warranty)}">${fmtDate(i.warranty)}</div></div></div>
+    </div>
+    <div class="btn-row">
+      <button class="ios-btn btn-red" onclick="deleteInv(${i.id})"><i class="fas fa-trash"></i> Elimina</button>
+      <button class="ios-btn btn-fill" onclick="closeModal()">Chiudi</button>
+    </div>`);
+}
+
+function deleteInv(id) {
+  D.inventory = D.inventory.filter(x => x.id !== id);
+  save(); closeModal(); renderInventory();
+}
+
+/* ==============================
+   ADD MODALS
+   ============================== */
+function openAdd() {
+  const s = curSec;
+  if      (s === 'gallery')   openAddPhoto();
+  else if (s === 'documents') openAddDoc();
+  else if (s === 'tasks')     openAddTask();
+  else if (s === 'vehicles')  openAddVehicle();
+  else                        openAddTask();
+}
+
+function openAddTask() {
+  openModal('Nuova attività', `
+    <label class="flbl">Titolo *</label>
+    <input class="finp" id="f-t" type="text" placeholder="Cosa devi fare?">
+    <label class="flbl">Note</label>
+    <textarea class="finp" id="f-d" rows="2" style="resize:none" placeholder="Dettagli aggiuntivi..."></textarea>
+    <label class="flbl">Priorità</label>
+    <select class="fsel" id="f-p"><option>Alta</option><option selected>Media</option><option>Bassa</option></select>
+    <label class="flbl">Scadenza</label>
+    <input class="finp" id="f-due" type="date">
+    <label class="flbl">Categoria</label>
+    <select class="fsel" id="f-c"><option>Casa</option><option>Lavoro</option><option>Veicoli</option><option>Salute</option><option>Personale</option><option>Moto</option><option>Foto</option></select>
+    <div class="btn-row">
+      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
+      <button class="ios-btn btn-blue" onclick="addTask()"><i class="fas fa-plus"></i> Aggiungi</button>
+    </div>`);
+}
+
+function addTask() {
+  const t = document.getElementById('f-t').value.trim();
+  if (!t) { notif('⚠️ Inserisci un titolo'); return; }
+  D.tasks.unshift({id:Date.now(), title:t, desc:document.getElementById('f-d').value,
+    priority:document.getElementById('f-p').value, due:document.getElementById('f-due').value||'2026-12-31',
+    cat:document.getElementById('f-c').value, done:false});
+  save(); closeModal(); renderTasks(curTasks);
+  notif('✅ Attività aggiunta');
+}
+
+function openAddPhoto() {
+  openModal('Aggiungi foto', `
+    <label class="flbl">Nome file</label>
+    <input class="finp" id="f-n" type="text" placeholder="Foto_nome.jpg">
+    <label class="flbl">Icona Font Awesome (es. fa-sun)</label>
+    <input class="finp" id="f-ic" type="text" value="fa-image">
+    <label class="flbl">Colore icona</label>
+    <input class="finp" id="f-cl" type="color" value="#0a84ff" style="height:50px;padding:6px">
+    <label class="flbl">Album</label>
+    <select class="fsel" id="f-al"><option>Viaggi</option><option>Auto</option><option>Moto</option><option>Casa</option><option>Famiglia</option><option>Lavoro</option></select>
+    <label class="flbl">Tag</label>
+    <input class="finp" id="f-tg" type="text" placeholder="vacanza, estate...">
+    <div class="btn-row">
+      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
+      <button class="ios-btn btn-blue" onclick="addPhoto()"><i class="fas fa-plus"></i> Aggiungi</button>
+    </div>`);
+}
+
+function addPhoto() {
+  D.photos.unshift({id:Date.now(),
+    ic:document.getElementById('f-ic').value||'fa-image',
+    name:document.getElementById('f-n').value||'Foto.jpg',
+    date:new Date().toISOString().split('T')[0],
+    album:document.getElementById('f-al').value,
+    tag:document.getElementById('f-tg').value||'foto',
+    col:document.getElementById('f-cl').value
+  });
+  save(); closeModal(); renderGallery(curGal);
+  notif('📸 Foto aggiunta');
+}
+
+const DOC_ICONS = {Identità:['fa-id-card','#0a84ff'],Casa:['fa-house','#ff9f0a'],Veicoli:['fa-car','#30d158'],Lavoro:['fa-briefcase','#5ac8fa'],Contratti:['fa-file-contract','#5e5ce6'],Garanzie:['fa-shield-halved','#ff453a'],Fatture:['fa-receipt','#bf5af2']};
+
+function openAddDoc() {
+  openModal('Nuovo documento', `
+    <label class="flbl">Titolo *</label>
+    <input class="finp" id="f-t" type="text" placeholder="Es. Carta d'Identità">
+    <label class="flbl">Categoria</label>
+    <select class="fsel" id="f-c"><option>Identità</option><option>Casa</option><option>Veicoli</option><option>Lavoro</option><option>Contratti</option><option>Garanzie</option><option>Fatture</option></select>
+    <label class="flbl">Data scadenza</label>
+    <input class="finp" id="f-e" type="date">
+    <label class="flbl">Note</label>
+    <textarea class="finp" id="f-n" rows="2" style="resize:none"></textarea>
+    <div class="btn-row">
+      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
+      <button class="ios-btn btn-blue" onclick="addDoc()"><i class="fas fa-plus"></i> Aggiungi</button>
+    </div>`);
+}
+
+function addDoc() {
+  const title = document.getElementById('f-t').value.trim();
+  if (!title) { notif('⚠️ Inserisci un titolo'); return; }
+  const cat = document.getElementById('f-c').value;
+  const [ic, icCol] = DOC_ICONS[cat] || ['fa-file','#888'];
+  D.docs.unshift({id:Date.now(), ic, icCol, title, cat,
+    date:new Date().toISOString().split('T')[0],
+    exp:document.getElementById('f-e').value||null,
+    note:document.getElementById('f-n').value
+  });
+  save(); closeModal(); renderDocs(curDocs);
+  notif('📄 Documento aggiunto');
+}
+
+function openAddVehicle() {
+  openModal('Nuovo veicolo', `
+    <label class="flbl">Tipo</label>
+    <select class="fsel" id="f-tp"><option>Auto</option><option>Moto</option><option>Scooter</option><option>Camper</option></select>
+    <label class="flbl">Marca e modello *</label>
+    <input class="finp" id="f-n" type="text" placeholder="Es. Fiat Panda 1.2">
+    <label class="flbl">Anno</label>
+    <input class="finp" id="f-y" type="number" value="2020" min="1980" max="2030">
+    <label class="flbl">Targa</label>
+    <input class="finp" id="f-pl" type="text" placeholder="AB 000 CD" style="text-transform:uppercase;letter-spacing:2px">
+    <label class="flbl">Km attuali</label>
+    <input class="finp" id="f-km" type="number" value="0" min="0">
+    <div class="btn-row">
+      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
+      <button class="ios-btn btn-blue" onclick="addVehicle()"><i class="fas fa-plus"></i> Aggiungi</button>
+    </div>`);
+}
+
+function addVehicle() {
+  const name = document.getElementById('f-n').value.trim();
+  if (!name) { notif('⚠️ Inserisci il modello'); return; }
+  const types = {Auto:['🚗','fa-car-side'],Moto:['🏍️','fa-motorcycle'],Scooter:['🛵','fa-motorcycle'],Camper:['🚐','fa-van-shuttle']};
+  const tp = document.getElementById('f-tp').value;
+  const [emoji, ic] = types[tp] || ['🚗','fa-car-side'];
+  D.vehicles.push({id:Date.now(), emoji, ic, name, model:name,
+    year:+document.getElementById('f-y').value,
+    plate:document.getElementById('f-pl').value.toUpperCase(),
+    km:+document.getElementById('f-km').value||0,
+    fuel:'Benzina', maint:[],
+    dl:[{name:'Assicurazione',date:'2027-07-01'},{name:'Revisione',date:'2028-01-01'}]
+  });
+  save(); closeModal(); renderVehicles();
+  notif('🚗 Veicolo aggiunto');
+}
+
+function openAddInv() {
+  openModal('Nuovo oggetto', `
+    <label class="flbl">Nome *</label>
+    <input class="finp" id="f-n" type="text" placeholder="Es. MacBook Pro">
+    <label class="flbl">Icona FA (es. fa-laptop)</label>
+    <input class="finp" id="f-ic" type="text" value="fa-box">
+    <label class="flbl">Colore</label>
+    <input class="finp" id="f-cl" type="color" value="#0a84ff" style="height:50px;padding:6px">
+    <label class="flbl">Categoria</label>
+    <select class="fsel" id="f-c"><option>Elettronica</option><option>Computer</option><option>Fotocamera</option><option>Audio</option><option>Smartphone</option><option>Elettrodomestici</option><option>Altro</option></select>
+    <label class="flbl">Prezzo acquisto (€)</label>
+    <input class="finp" id="f-p" type="number" value="0" min="0">
+    <label class="flbl">Anno acquisto</label>
+    <input class="finp" id="f-y" type="number" value="2024" min="1990" max="2030">
+    <label class="flbl">Garanzia fino al</label>
+    <input class="finp" id="f-w" type="date">
+    <div class="btn-row">
+      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
+      <button class="ios-btn btn-blue" onclick="addInv()"><i class="fas fa-plus"></i> Aggiungi</button>
+    </div>`);
+}
+
+function addInv() {
+  const name = document.getElementById('f-n').value.trim();
+  if (!name) { notif('⚠️ Inserisci il nome'); return; }
+  D.inventory.push({id:Date.now(),
+    ic:document.getElementById('f-ic').value||'fa-box',
+    col:document.getElementById('f-cl').value,
+    name, cat:document.getElementById('f-c').value,
+    price:+document.getElementById('f-p').value||0,
+    year:+document.getElementById('f-y').value||2024,
+    warranty:document.getElementById('f-w').value||'2027-12-31'
+  });
+  save(); closeModal(); renderInventory();
+  notif('📦 Oggetto aggiunto');
+}
+
+/* ==============================
+   TRANSFER
+   ============================== */
+function openReceive() {
+  openModal('Ricevi file', `
+    <div style="text-align:center;padding:12px 0 20px">
+      <div style="width:170px;height:170px;background:#fff;border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center">
+        <i class="fas fa-qrcode" style="font-size:100px;color:#000"></i>
+      </div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:6px">In attesa di connessione...</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:18px">Scansiona con l'altro dispositivo sulla stessa rete</div>
+      <div style="background:var(--bg3);border-radius:10px;padding:13px;font-family:monospace;font-size:15px;color:var(--blue);font-weight:700;letter-spacing:1px">192.168.1.10:8765</div>
+    </div>
+    <button class="ios-btn btn-fill" style="width:100%;margin-top:8px" onclick="closeModal()">Annulla</button>`);
+}
+
+function openSend() {
+  openModal('Invia file', `
+    <div style="text-align:center;padding:20px 0 24px">
+      <i class="fas fa-upload" style="font-size:44px;color:var(--blue);margin-bottom:14px;display:block"></i>
+      <div style="font-size:15px;font-weight:600;margin-bottom:6px">Seleziona file da inviare</div>
+      <div style="font-size:13px;color:var(--text3)">L'altro dispositivo deve essere in modalità Ricevi</div>
+    </div>
+    <div style="background:var(--bg3);border:1.5px dashed var(--sep);border-radius:12px;padding:28px;text-align:center;margin-bottom:16px;cursor:pointer"
+      onclick="this.innerHTML='<i class=fas fa-file-circle-check style=color:var(--green);font-size:28px;display:block;margin-bottom:8px></i><span style=color:var(--green);font-weight:600>documento.pdf selezionato</span>'">
+      <i class="fas fa-plus-circle" style="font-size:24px;color:var(--text3);margin-bottom:8px;display:block"></i>
+      <div style="font-size:14px;color:var(--text3)">Tocca per scegliere i file</div>
+    </div>
+    <div class="btn-row">
+      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
+      <button class="ios-btn btn-blue" onclick="closeModal();notif('📡 Trasferimento avviato!')">
+        <i class="fas fa-paper-plane"></i> Invia
+      </button>
+    </div>`);
+}
+
+/* ==============================
+   SETTINGS
+   ============================== */
+function openEditName() {
+  openModal('Modifica nome', `
+    <label class="flbl">Il tuo nome</label>
+    <input class="finp" id="f-name" type="text" value="${D.name||'Utente'}">
+    <div class="btn-row">
+      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
+      <button class="ios-btn btn-blue" onclick="saveName()">Salva</button>
+    </div>`);
+}
+
+function saveName() {
+  D.name = document.getElementById('f-name').value.trim() || 'Utente';
+  save(); closeModal();
+  document.getElementById('disp-name').textContent = D.name;
+  notif('✅ Profilo aggiornato');
+}
+
+function exportBackup() {
+  const json = JSON.stringify(D, null, 2);
+  const blob = new Blob([json], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'PersonalHub_Backup_' + new Date().toISOString().split('T')[0] + '.json';
+  a.click(); URL.revokeObjectURL(a.href);
+  notif('💾 Backup esportato!');
+}
+
+function importBackup(inp) {
+  const f = inp.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    try {
+      const p = JSON.parse(e.target.result);
+      Object.assign(D, p);
+      save(); renderHome(); nav('home');
+      notif('✅ Backup importato con successo!');
+    } catch {
+      notif('❌ File non valido');
+    }
+  };
+  r.readAsText(f);
+  inp.value = '';
+}
+
+function confirmDeleteAll() {
+  openModal('Elimina tutti i dati', `
+    <div style="text-align:center;padding:20px 0 24px">
+      <i class="fas fa-triangle-exclamation" style="font-size:48px;color:var(--red);display:block;margin-bottom:14px"></i>
+      <div style="font-size:17px;font-weight:600;margin-bottom:10px">Sei assolutamente sicuro?</div>
+      <div style="font-size:14px;color:var(--text3);line-height:1.6;max-width:280px;margin:0 auto">
+        Verranno eliminati definitivamente tutte le attività, foto, documenti, veicoli e oggetti dell'inventario.<br><br>
+        <strong style="color:var(--red)">Questa azione non può essere annullata.</strong>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
+      <button class="ios-btn btn-red" onclick="deleteAllData()"><i class="fas fa-trash-can"></i> Elimina tutto</button>
+    </div>`);
+}
+
+function deleteAllData() {
+  D.tasks = []; D.photos = []; D.docs = [];
+  D.vehicles = []; D.inventory = []; D.name = 'Utente';
+  try { localStorage.removeItem('ph_v2'); } catch(e) {}
+  closeModal(); nav('home');
+  notif('🗑️ Tutti i dati eliminati');
+}
+
+/* ==============================
+   SEARCH
+   ============================== */
+function openSearch() {
+  openModal('Cerca', `
+    <input class="finp" id="sq" type="search" placeholder="Cerca in tutto..." oninput="doSearch(this.value)" style="margin-bottom:8px">
+    <div id="sr"></div>`);
+  setTimeout(() => document.getElementById('sq')?.focus(), 150);
+}
+
+function doSearch(q) {
+  const el = document.getElementById('sr'); if (!el) return;
+  if (!q) { el.innerHTML = ''; return; }
+  const ql = q.toLowerCase(), res = [];
+  D.tasks.filter(t => t.title.toLowerCase().includes(ql)).forEach(t =>
+    res.push({ic:'fa-list-check', col:'var(--blue)', text:t.title, sub:'Attività · '+t.priority}));
+  D.docs.filter(d => d.title.toLowerCase().includes(ql)).forEach(d =>
+    res.push({ic:d.ic, col:d.icCol, text:d.title, sub:'Documento · '+d.cat}));
+  D.photos.filter(p => p.name.toLowerCase().includes(ql)||p.album.toLowerCase().includes(ql)).forEach(p =>
+    res.push({ic:p.ic, col:p.col, text:p.name, sub:'Foto · '+p.album}));
+  D.vehicles.filter(v => v.name.toLowerCase().includes(ql)).forEach(v =>
+    res.push({ic:v.ic, col:'var(--purple)', text:v.name, sub:'Veicolo'}));
+  D.inventory.filter(i => i.name.toLowerCase().includes(ql)).forEach(i =>
+    res.push({ic:i.ic, col:i.col, text:i.name, sub:'Inventario · '+i.cat}));
+
+  el.innerHTML = res.length
+    ? '<div class="ios-list" style="margin:0">'+res.map(r =>
+        `<div class="ios-row"><div class="row-ic" style="background:${r.col}22"><i class="fas ${r.ic}" style="color:${r.col}"></i></div><div class="row-body"><div class="row-title">${r.text}</div><div class="row-sub">${r.sub}</div></div></div>`
+      ).join('')+'</div>'
+    : emptyHTML('fa-magnifying-glass', 'Nessun risultato per "' + q + '"');
+}
+
+/* ==============================
+   MODAL
+   ============================== */
+function openModal(title, body) {
+  document.getElementById('m-title').textContent = title;
+  document.getElementById('m-body').innerHTML = body;
+  document.getElementById('modal').classList.add('on');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal'))
+    document.getElementById('modal').classList.remove('on');
+}
+
+/* ==============================
+   HELPERS
+   ============================== */
+function emptyHTML(ic, msg) {
+  return `<div class="empty"><i class="fas ${ic}"></i><p>${msg}</p></div>`;
+}
+
+/* ==============================
+   PWA / INSTALL
+   ============================== */
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstall = e;
+  const banner = document.getElementById('install-banner');
+  if (banner && !localStorage.getItem('ph_install_dismissed')) banner.style.display = 'flex';
+});
+
+function installPWA() {
+  if (!deferredInstall) return;
+  deferredInstall.prompt();
+  deferredInstall.userChoice.then(() => { deferredInstall = null; dismissInstall(); });
+}
+
+function dismissInstall() {
+  localStorage.setItem('ph_install_dismissed','1');
+  const banner = document.getElementById('install-banner');
+  if (banner) banner.style.display = 'none';
+}
+
+/* ==============================
+   SERVICE WORKER
+   ============================== */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    const sw = `
+const CACHE='ph-v2';
+const ASSETS=['./'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));
+self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{const clone=res.clone();caches.open(CACHE).then(c=>c.put(e.request,clone));return res;}).catch(()=>caches.match('./')))));`;
+    const blob = new Blob([sw], {type:'application/javascript'});
+    navigator.serviceWorker.register(URL.createObjectURL(blob));
+  });
+}
+
+/* ==============================
+   PWA MANIFEST
+   ============================== */
+(function() {
+  const manifest = {
+    name:'Personal Hub', short_name:'Personal Hub',
+    start_url:'./', display:'standalone',
+    background_color:'#000000', theme_color:'#0a84ff',
+    orientation:'portrait',
+    icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="%230a84ff"/><text y=".9em" font-size="70" x="12">🏠</text></svg>',sizes:'512x512',type:'image/svg+xml'}]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+  document.getElementById('manifest-link').href = URL.createObjectURL(blob);
+})();
+
+/* ==============================
+   INIT
+   ============================== */
+load();
+renderHome();
+setInterval(updateClock, 15000);
+updateClock();
+</script>
+</body>
+</html>
