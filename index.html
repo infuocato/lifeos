@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#000000">
 <link rel="apple-touch-icon" href="/favicon.png">
 <link rel="apple-touch-icon" href="https://via.placeholder.com/180x180/0A84FF/fff?text=MF">
-<meta name="description" content="Il tuo spazio personale digitale — foto, documenti, attività, veicoli e molto altro.">
+<meta name="description" content="Il tuo spazio personale digitale — documenti, attività, veicoli e molto altro.">
 <title>LIFEOS</title>
 
 <!-- Font Awesome 6 (CDN) -->
@@ -23,18 +23,23 @@
 /* ===== RESET & ROOT ===== */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#000;--bg2:#1c1c1e;--bg3:#2c2c2e;--bg4:#3a3a3c;
-  --sep:rgba(255,255,255,0.1);--sep2:rgba(255,255,255,0.06);
-  --blue:#0a84ff;--green:#30d158;--orange:#ff9f0a;--red:#ff453a;
-  --yellow:#ffd60a;--purple:#bf5af2;--teal:#5ac8fa;--indigo:#5e5ce6;
-  --text:#ffffff;--text2:rgba(235,235,245,0.85);--text3:rgba(235,235,245,0.55);--text4:rgba(235,235,245,0.28);
-  --fill:rgba(255,255,255,0.05);--fill2:rgba(255,255,255,0.09);
-  --r:13px;--r-sm:10px;--r-xs:8px;--r-pill:100px;
+  --bg:#000000;--bg2:#161618;--bg3:#232326;--bg4:#2f2f33;
+  --sep:rgba(255,255,255,0.11);--sep2:rgba(255,255,255,0.07);--hair:rgba(255,255,255,0.08);
+  --blue:#0a84ff;--green:#32d74b;--orange:#ff9f0a;--red:#ff453a;
+  --yellow:#ffd60a;--purple:#bf5af2;--teal:#64d2ff;--indigo:#5e5ce6;
+  --text:#f5f5f7;--text2:rgba(245,245,247,0.82);--text3:rgba(245,245,247,0.52);--text4:rgba(245,245,247,0.26);
+  --fill:rgba(255,255,255,0.055);--fill2:rgba(255,255,255,0.09);
+  --r:18px;--r-lg:24px;--r-sm:13px;--r-xs:9px;--r-pill:100px;
+  --ease:cubic-bezier(.32,.72,0,1);
   --safe-top:env(safe-area-inset-top,0px);
   --safe-bottom:env(safe-area-inset-bottom,0px);
 }
 html,body{height:100%;overflow:hidden}
-body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+body{
+  font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif;
+  background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;
+  font-feature-settings:'ss01' 1;
+}
 
 /* ===== PHONE SHELL ===== */
 .phone{
@@ -55,228 +60,261 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
 
 /* ===== TOP BAR ===== */
 .topbar{
-  flex-shrink:0;padding:0 20px 10px;
+  flex-shrink:0;padding:2px 20px 14px;
   display:flex;align-items:flex-end;justify-content:space-between;
+  position:relative;z-index:40;transition:background .25s var(--ease),border-color .25s var(--ease);
+  border-bottom:.5px solid transparent;
 }
-.tb-left .tb-title{font-size:30px;font-weight:700;letter-spacing:-.6px;line-height:1}
-.tb-left .tb-sub{font-size:12px;color:var(--text3);margin-top:3px;letter-spacing:.3px;text-transform:uppercase}
-.tb-actions{display:flex;gap:8px;padding-bottom:4px}
+.topbar.scrolled{
+  background:rgba(10,10,12,.78);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom-color:var(--sep2);
+}
+.tb-left .tb-title{font-size:32px;font-weight:700;letter-spacing:-.7px;line-height:1.08;transition:font-size .2s var(--ease)}
+.topbar.scrolled .tb-left .tb-title{font-size:20px}
+.tb-left .tb-sub{font-size:13px;color:var(--text3);margin-top:4px;letter-spacing:-.1px;font-weight:450;transition:opacity .2s var(--ease),height .2s var(--ease)}
+.topbar.scrolled .tb-left .tb-sub{opacity:0;height:0;margin:0;overflow:hidden}
+.tb-actions{display:flex;gap:8px;padding-bottom:5px}
 .tb-btn{
-  width:36px;height:36px;border-radius:50%;
+  width:34px;height:34px;border-radius:50%;
   background:var(--fill2);border:none;
-  color:var(--text3);font-size:14px;
+  color:var(--text2);font-size:14px;
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:all .15s;
+  cursor:pointer;transition:transform .15s var(--ease),background .15s;
 }
-.tb-btn:active{transform:scale(.92);background:var(--fill)}
+.tb-btn:active{transform:scale(.9);background:var(--fill)}
 
 /* ===== SCROLL AREA ===== */
 .scroll{
   flex:1;overflow-y:auto;overflow-x:hidden;
   -webkit-overflow-scrolling:touch;
-  padding-bottom:calc(84px + var(--safe-bottom));
+  padding-bottom:calc(104px + var(--safe-bottom));
   scroll-behavior:smooth;
 }
 .scroll::-webkit-scrollbar{display:none}
 
 /* ===== SECTIONS ===== */
-.sec{display:none;animation:fadeIn .2s ease}
+.sec{display:none;animation:fadeIn .35s var(--ease)}
 .sec.on{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* ===== STAT GRID ===== */
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 4px}
-.stat-card{background:var(--bg2);border-radius:var(--r);padding:16px}
-.stat-ic{font-size:22px;margin-bottom:8px}
-.stat-val{font-size:28px;font-weight:700;letter-spacing:-.5px;line-height:1}
-.stat-lbl{font-size:12px;color:var(--text3);margin-top:5px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:2px 16px 4px}
+.stat-card{
+  background:var(--bg2);border-radius:var(--r-sm);padding:14px 10px;
+  box-shadow:inset 0 0 0 1px var(--hair);
+  transition:transform .15s var(--ease);
+}
+.stat-card:active{transform:scale(.96)}
+.stat-ic{
+  width:30px;height:30px;border-radius:9px;margin-bottom:9px;
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+}
+.stat-val{font-size:22px;font-weight:700;letter-spacing:-.4px;line-height:1;font-variant-numeric:tabular-nums}
+.stat-lbl{font-size:11.5px;color:var(--text3);margin-top:5px;line-height:1.3;font-weight:450}
 
 /* ===== SECTION HEADER ===== */
 .grp-hdr{
   display:flex;align-items:center;justify-content:space-between;
-  padding:18px 20px 9px;
-  font-size:12px;font-weight:600;color:var(--text3);
-  letter-spacing:.5px;text-transform:uppercase;
+  padding:22px 20px 10px;
+  font-size:13px;font-weight:600;color:var(--text2);
+  letter-spacing:-.2px;
 }
-.grp-hdr.first{padding-top:10px}
-.grp-link{font-size:13px;font-weight:500;color:var(--blue);text-transform:none;letter-spacing:0;cursor:pointer}
+.grp-hdr.first{padding-top:14px}
+.grp-hdr i{opacity:.9}
+.grp-link{font-size:14px;font-weight:500;color:var(--blue);letter-spacing:0;cursor:pointer;display:flex;align-items:center;gap:3px}
 
 /* ===== IOS LIST ===== */
-.ios-list{margin:0 16px 12px;background:var(--bg2);border-radius:var(--r);overflow:hidden}
+.ios-list{margin:0 16px 14px;background:var(--bg2);border-radius:var(--r-sm);overflow:hidden;box-shadow:inset 0 0 0 1px var(--hair)}
 .ios-row{
-  display:flex;align-items:center;gap:13px;padding:13px 16px;
-  border-bottom:.5px solid var(--sep2);cursor:pointer;
-  transition:background .1s;min-height:52px;
+  display:flex;align-items:center;gap:12px;padding:12px 16px;
+  cursor:pointer;position:relative;
+  transition:background .12s;min-height:54px;
 }
-.ios-row:last-child{border-bottom:none}
+.ios-row:not(:last-child)::after{
+  content:'';position:absolute;left:16px;right:0;bottom:0;height:.5px;background:var(--sep2);
+}
+.ios-row:has(.row-ic):not(:last-child)::after{left:60px}
 .ios-row:active{background:var(--fill)}
-.row-ic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.row-ic{
+  width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);
+  position:relative;
+}
 .row-body{flex:1;min-width:0}
-.row-title{font-size:16px;color:var(--text);font-weight:400}
-.row-sub{font-size:13px;color:var(--text3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row-title{font-size:16px;color:var(--text);font-weight:450;letter-spacing:-.1px}
+.row-sub{font-size:13.5px;color:var(--text3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .row-right{display:flex;align-items:center;gap:7px;flex-shrink:0}
 .row-chev{color:var(--text4);font-size:12px}
-.badge{font-size:12px;font-weight:600;padding:3px 9px;border-radius:var(--r-pill);line-height:1.4;white-space:nowrap}
+.badge{font-size:12px;font-weight:600;padding:4px 10px;border-radius:var(--r-pill);line-height:1.4;white-space:nowrap;letter-spacing:-.1px}
 
 /* ===== CHECK CIRCLE ===== */
-.chk{width:24px;height:24px;border-radius:50%;border:2px solid var(--sep);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .2s}
-.chk.done{background:var(--green);border-color:var(--green)}
+.chk{width:24px;height:24px;border-radius:50%;border:1.75px solid var(--sep);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .2s var(--ease)}
+.chk.done{background:var(--green);border-color:var(--green);transform:scale(1.05)}
 .chk.done i{display:block;font-size:11px;color:#fff}
 .chk:not(.done) i{display:none}
 
-/* ===== PHOTO GRID ===== */
-.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:0 16px;border-radius:var(--r);overflow:hidden}
-.photo-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;transition:opacity .15s}
-.photo-cell:active{opacity:.7}
-
 /* ===== PILLS ===== */
-.pills{display:flex;gap:7px;padding:0 16px 14px;overflow-x:auto;scrollbar-width:none}
+.pills{display:flex;gap:8px;padding:2px 16px 16px;overflow-x:auto;scrollbar-width:none}
 .pills::-webkit-scrollbar{display:none}
 .pill{
-  padding:7px 17px;border-radius:var(--r-pill);font-size:13px;font-weight:500;
-  border:none;background:var(--fill2);color:var(--text3);
-  cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;
+  padding:8px 16px;border-radius:var(--r-pill);font-size:13.5px;font-weight:500;
+  border:none;background:var(--fill2);color:var(--text2);
+  cursor:pointer;white-space:nowrap;transition:all .18s var(--ease);flex-shrink:0;
+  box-shadow:inset 0 0 0 1px var(--hair);
 }
-.pill.on{background:var(--blue);color:#fff}
+.pill:active{transform:scale(.94)}
+.pill.on{background:var(--blue);color:#fff;box-shadow:none}
 
 /* ===== VEHICLE CARD ===== */
-.veh-card{margin:0 16px 12px;background:var(--bg2);border-radius:var(--r);overflow:hidden;cursor:pointer}
-.veh-top{padding:16px 16px 8px;display:flex;justify-content:space-between;align-items:flex-start}
-.veh-name{font-size:19px;font-weight:600;letter-spacing:-.3px}
-.veh-model{font-size:13px;color:var(--text3);margin-top:3px}
-.veh-plate{background:var(--bg3);border-radius:7px;padding:5px 11px;font-size:13px;font-weight:700;font-family:monospace;letter-spacing:1.5px}
-.veh-emoji{font-size:56px;text-align:center;padding:6px 0 14px}
-.veh-stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:.5px solid var(--sep2)}
-.veh-stat{padding:12px 6px;text-align:center}
+.veh-card{margin:0 16px 14px;background:var(--bg2);border-radius:var(--r);overflow:hidden;cursor:pointer;box-shadow:inset 0 0 0 1px var(--hair);transition:transform .15s var(--ease)}
+.veh-card:active{transform:scale(.985)}
+.veh-top{padding:18px 18px 6px;display:flex;justify-content:space-between;align-items:flex-start}
+.veh-name{font-size:20px;font-weight:700;letter-spacing:-.4px}
+.veh-model{font-size:13.5px;color:var(--text3);margin-top:3px}
+.veh-plate{background:var(--bg4);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;font-family:ui-monospace,monospace;letter-spacing:1.5px;box-shadow:inset 0 0 0 1px var(--hair)}
+.veh-emoji{font-size:52px;text-align:center;padding:10px 0 16px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))}
+.veh-stats{display:grid;grid-template-columns:repeat(2,1fr);border-top:.5px solid var(--sep2)}
+.veh-stat{padding:13px 6px;text-align:center}
 .veh-stat+.veh-stat{border-left:.5px solid var(--sep2)}
-.veh-sv{font-size:15px;font-weight:600}
-.veh-sl{font-size:11px;color:var(--text3);margin-top:3px}
+.veh-sv{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.veh-sl{font-size:11.5px;color:var(--text3);margin-top:3px}
 
 /* ===== DEADLINES ===== */
-.dl-row{display:flex;align-items:center;gap:13px;padding:12px 16px;border-bottom:.5px solid var(--sep2)}
-.dl-row:last-child{border-bottom:none}
-.dl-days{min-width:46px;text-align:center}
-.dl-num{font-size:22px;font-weight:700;line-height:1}
-.dl-lbl{font-size:10px;color:var(--text3);margin-top:2px}
+.dl-row{display:flex;align-items:center;gap:14px;padding:13px 16px;position:relative}
+.dl-row:not(:last-child)::after{content:'';position:absolute;left:16px;right:0;bottom:0;height:.5px;background:var(--sep2)}
+.dl-days{min-width:44px;text-align:center}
+.dl-num{font-size:21px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.dl-lbl{font-size:10px;color:var(--text3);margin-top:3px;font-weight:500}
 .dl-info{flex:1}
-.dl-name{font-size:15px;font-weight:500}
-.dl-date{font-size:12px;color:var(--text3);margin-top:2px}
+.dl-name{font-size:15px;font-weight:500;letter-spacing:-.1px}
+.dl-date{font-size:12.5px;color:var(--text3);margin-top:2px}
 
 /* ===== TRANSFER ===== */
-.xfer-card{margin:0 16px 12px;background:var(--bg2);border-radius:var(--r);padding:22px;text-align:center}
-.qr-box{width:160px;height:160px;background:#fff;border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
+.xfer-card{margin:0 16px 12px;background:var(--bg2);border-radius:var(--r);padding:24px;text-align:center;box-shadow:inset 0 0 0 1px var(--hair)}
+.qr-box{width:160px;height:160px;background:#fff;border-radius:20px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
 .prog-bar{height:4px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-top:6px}
 .prog-fill{height:100%;border-radius:4px}
 
 /* ===== SETTINGS ===== */
-.set-section{margin:0 16px 6px}
-.set-title{font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.4px;text-transform:uppercase;padding:16px 4px 8px}
-.set-list{background:var(--bg2);border-radius:var(--r);overflow:hidden}
-.set-row{display:flex;align-items:center;gap:13px;padding:14px 16px;border-bottom:.5px solid var(--sep2);cursor:pointer;transition:background .1s;min-height:52px}
-.set-row:last-child{border-bottom:none}
+.set-section{margin:0 16px 8px}
+.set-title{font-size:13px;font-weight:600;color:var(--text2);letter-spacing:-.1px;padding:20px 4px 9px}
+.set-list{background:var(--bg2);border-radius:var(--r-sm);overflow:hidden;box-shadow:inset 0 0 0 1px var(--hair)}
+.set-row{display:flex;align-items:center;gap:13px;padding:13px 16px;cursor:pointer;transition:background .12s;min-height:54px;position:relative}
+.set-row:not(:last-child)::after{content:'';position:absolute;left:59px;right:0;bottom:0;height:.5px;background:var(--sep2)}
 .set-row:active{background:var(--fill)}
-.set-ic{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;flex-shrink:0}
+.set-ic{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;flex-shrink:0}
 .set-info{flex:1}
-.set-label{font-size:16px;color:var(--text)}
+.set-label{font-size:16px;color:var(--text);font-weight:450;letter-spacing:-.1px}
 .set-sub{font-size:13px;color:var(--text3);margin-top:1px}
 
 /* ===== FAB ===== */
 .fab{
-  position:fixed;bottom:calc(88px + var(--safe-bottom));
-  right:calc(50% - 215px + 16px);
-  width:54px;height:54px;border-radius:50%;
+  position:fixed;bottom:calc(108px + var(--safe-bottom));
+  right:calc(50% - 215px + 18px);
+  width:56px;height:56px;border-radius:50%;
   background:var(--blue);color:#fff;font-size:22px;
   border:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 18px rgba(10,132,255,.4);
-  transition:transform .15s;z-index:50;
+  box-shadow:0 8px 20px -4px rgba(10,132,255,.55),0 2px 6px rgba(0,0,0,.3);
+  transition:transform .2s var(--ease);z-index:50;
 }
-.fab:active{transform:scale(.92)}
-@media(max-width:430px){.fab{right:16px}}
+.fab:active{transform:scale(.9)}
+@media(max-width:430px){.fab{right:18px}}
 
 /* ===== BOTTOM NAV ===== */
 .bnav{
-  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-  width:430px;max-width:100%;
-  background:rgba(18,18,20,.92);
-  border-top:.5px solid var(--sep);
-  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
-  padding:8px 0 calc(10px + var(--safe-bottom));
+  position:fixed;bottom:calc(14px + var(--safe-bottom));left:50%;transform:translateX(-50%);
+  width:calc(430px - 28px);max-width:calc(100% - 28px);
+  background:rgba(28,28,32,.72);
+  border-radius:28px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.09),0 12px 32px -8px rgba(0,0,0,.55);
+  backdrop-filter:blur(30px) saturate(1.6);-webkit-backdrop-filter:blur(30px) saturate(1.6);
+  padding:10px 6px;
   display:flex;justify-content:space-around;z-index:100;
 }
-.nav-it{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 10px;border:none;background:none;min-width:52px}
-.nav-it i{font-size:22px;color:var(--text4);transition:color .2s}
-.nav-it span{font-size:10px;font-weight:500;color:var(--text4);transition:color .2s}
+.nav-it{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 8px;border:none;background:none;min-width:52px;border-radius:16px;transition:background .15s var(--ease)}
+.nav-it i{font-size:21px;color:var(--text4);transition:color .2s,transform .2s var(--ease)}
+.nav-it span{font-size:10px;font-weight:500;color:var(--text4);transition:color .2s;letter-spacing:-.1px}
 .nav-it.on i,.nav-it.on span{color:var(--blue)}
+.nav-it.on i{transform:translateY(-1px)}
+.nav-it:active{transform:scale(.92)}
 
 /* ===== MODAL ===== */
 .modal-wrap{
-  position:fixed;inset:0;background:rgba(0,0,0,.68);
+  position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);
   z-index:200;display:none;align-items:flex-end;justify-content:center;
 }
 .modal-wrap.on{display:flex}
 .modal-sheet{
-  background:var(--bg2);border-radius:22px 22px 0 0;
+  background:var(--bg2);border-radius:28px 28px 0 0;
   width:100%;max-width:430px;
   max-height:90dvh;overflow-y:auto;
   padding:0 0 calc(28px + var(--safe-bottom));
-  animation:slideUp .25s cubic-bezier(.32,1,.6,1);
+  box-shadow:0 -8px 40px rgba(0,0,0,.5);
+  animation:slideUp .38s var(--ease);
 }
 .modal-sheet::-webkit-scrollbar{display:none}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.modal-handle{width:38px;height:4px;background:var(--sep);border-radius:4px;margin:10px auto 14px}
-.modal-title{font-size:17px;font-weight:600;text-align:center;padding:0 20px 16px;color:var(--text)}
+.modal-handle{width:36px;height:5px;background:var(--sep);border-radius:4px;margin:12px auto 16px}
+.modal-title{font-size:18px;font-weight:650;letter-spacing:-.3px;text-align:center;padding:0 20px 16px;color:var(--text)}
 .modal-body{padding:0 16px}
 
 /* ===== FORMS ===== */
-.flbl{font-size:13px;color:var(--text3);margin-bottom:6px;display:block;padding-left:4px}
+.flbl{font-size:13px;color:var(--text3);margin-bottom:6px;display:block;padding-left:4px;font-weight:500}
 .finp{
   width:100%;background:var(--bg3);border:none;color:var(--text);
-  padding:13px 14px;border-radius:var(--r-sm);font-size:16px;
+  padding:14px 15px;border-radius:var(--r-sm);font-size:16px;
   outline:none;font-family:inherit;margin-bottom:14px;
-  -webkit-appearance:none;
+  box-shadow:inset 0 0 0 1px var(--hair);
+  -webkit-appearance:none;transition:box-shadow .15s;
 }
 .finp::placeholder{color:var(--text4)}
-.finp:focus{background:var(--bg4)}
+.finp:focus{box-shadow:inset 0 0 0 1.5px var(--blue)}
 .fsel{
   width:100%;background:var(--bg3);border:none;color:var(--text);
-  padding:13px 14px;border-radius:var(--r-sm);font-size:16px;
+  padding:14px 15px;border-radius:var(--r-sm);font-size:16px;
   outline:none;font-family:inherit;margin-bottom:14px;
+  box-shadow:inset 0 0 0 1px var(--hair);
   -webkit-appearance:none;appearance:none;
 }
 .btn-row{display:flex;gap:10px;margin-top:4px}
-.ios-btn{flex:1;padding:14px;border-radius:var(--r);font-size:16px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .15s}
-.ios-btn:active{transform:scale(.97)}
+.ios-btn{flex:1;padding:15px;border-radius:var(--r-sm);font-size:16px;font-weight:600;letter-spacing:-.1px;border:none;cursor:pointer;font-family:inherit;transition:transform .15s var(--ease),opacity .15s}
+.ios-btn:active{transform:scale(.97);opacity:.85}
 .btn-blue{background:var(--blue);color:#fff}
 .btn-red{background:var(--red);color:#fff}
 .btn-fill{background:var(--fill2);color:var(--text)}
 
 /* ===== EMPTY STATE ===== */
-.empty{text-align:center;padding:48px 20px}
-.empty i{font-size:40px;color:var(--text4);margin-bottom:14px;display:block}
-.empty p{font-size:15px;color:var(--text3)}
+.empty{text-align:center;padding:52px 20px}
+.empty i{
+  width:64px;height:64px;border-radius:50%;background:var(--fill2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;color:var(--text3);margin:0 auto 16px;
+}
+.empty p{font-size:15px;color:var(--text3);font-weight:450}
 
 /* ===== NOTIFICATION ===== */
 .notif{
-  position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-10px);
-  background:var(--bg2);border:.5px solid var(--sep);color:var(--text);
-  padding:11px 22px;border-radius:var(--r-pill);
+  position:fixed;top:calc(var(--safe-top) + 14px);left:50%;transform:translateX(-50%) translateY(-14px) scale(.96);
+  background:rgba(40,40,44,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:.5px solid var(--sep);color:var(--text);
+  padding:12px 22px;border-radius:var(--r-pill);
   font-size:14px;font-weight:500;z-index:500;
-  opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;
-  box-shadow:0 4px 24px rgba(0,0,0,.5);
+  opacity:0;transition:all .35s var(--ease);pointer-events:none;white-space:nowrap;
+  box-shadow:0 8px 28px rgba(0,0,0,.45);
 }
-.notif.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.notif.on{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
 
 /* ===== INSTALL BANNER ===== */
 .install-bar{
-  margin:0 16px 12px;background:linear-gradient(135deg,#1a2a4a,#0d1f3a);
-  border:1px solid rgba(10,132,255,.3);border-radius:var(--r);padding:14px 16px;
+  margin:0 16px 14px;background:linear-gradient(135deg,rgba(10,132,255,.22),rgba(10,132,255,.06));
+  box-shadow:inset 0 0 0 1px rgba(10,132,255,.35);border-radius:var(--r);padding:15px 16px;
   display:flex;align-items:center;gap:12px;cursor:pointer;
 }
-.install-bar .ib-icon{font-size:28px;flex-shrink:0}
+.install-bar .ib-icon{font-size:26px;flex-shrink:0}
 .install-bar .ib-text{flex:1}
-.install-bar .ib-title{font-size:14px;font-weight:600;color:var(--blue)}
-.install-bar .ib-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.install-bar .ib-title{font-size:14px;font-weight:600;color:var(--blue);letter-spacing:-.1px}
+.install-bar .ib-sub{font-size:12.5px;color:var(--text3);margin-top:2px}
 .install-bar .ib-close{font-size:18px;color:var(--text3);padding:4px}
 
 /* ===== RESPONSIVE ===== */
@@ -292,7 +330,7 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
   </div>
 
   <!-- TOP BAR -->
-  <div class="topbar">
+  <div class="topbar" id="topbar">
     <div class="tb-left">
       <div class="tb-title" id="tb-title">LifeOS</div>
       <div class="tb-sub" id="tb-sub">La tua vita in un unico spazio privato</div>
@@ -319,22 +357,17 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
 
       <div class="stat-grid">
         <div class="stat-card">
-          <div class="stat-ic"><i class="fas fa-list-check" style="color:var(--blue)"></i></div>
+          <div class="stat-ic" style="background:linear-gradient(135deg,rgba(10,132,255,.35),rgba(10,132,255,.12))"><i class="fas fa-list-check" style="color:var(--blue)"></i></div>
           <div class="stat-val" id="s-tasks">0</div>
           <div class="stat-lbl">Attività da fare</div>
         </div>
         <div class="stat-card">
-          <div class="stat-ic"><i class="fas fa-images" style="color:var(--green)"></i></div>
-          <div class="stat-val" id="s-photos">0</div>
-          <div class="stat-lbl">Foto archiviate</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-ic"><i class="fas fa-file-lines" style="color:var(--orange)"></i></div>
+          <div class="stat-ic" style="background:linear-gradient(135deg,rgba(255,159,10,.35),rgba(255,159,10,.12))"><i class="fas fa-file-lines" style="color:var(--orange)"></i></div>
           <div class="stat-val" id="s-docs">0</div>
           <div class="stat-lbl">Documenti</div>
         </div>
         <div class="stat-card">
-          <div class="stat-ic"><i class="fas fa-car-side" style="color:var(--purple)"></i></div>
+          <div class="stat-ic" style="background:linear-gradient(135deg,rgba(191,90,242,.35),rgba(191,90,242,.12))"><i class="fas fa-car-side" style="color:var(--purple)"></i></div>
           <div class="stat-val" id="s-veh">0</div>
           <div class="stat-lbl">Veicoli nel garage</div>
         </div>
@@ -349,27 +382,6 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
       </div>
       <div class="ios-list" id="home-tasks"></div>
 
-      <div class="grp-hdr">
-        <span><i class="fas fa-images" style="color:var(--teal);margin-right:6px"></i>Ultime foto</span>
-        <span class="grp-link" onclick="nav('gallery')">Galleria <i class="fas fa-chevron-right" style="font-size:10px"></i></span>
-      </div>
-      <div id="home-photos" class="photo-grid"></div>
-      <div style="height:8px"></div>
-    </div>
-
-    <!-- ======= GALLERY ======= -->
-    <div id="sec-gallery" class="sec">
-      <div class="pills" id="gal-pills">
-        <button class="pill on" onclick="fGal('all',this)">Tutte</button>
-        <button class="pill" onclick="fGal('2025',this)">2025</button>
-        <button class="pill" onclick="fGal('2024',this)">2024</button>
-        <button class="pill" onclick="fGal('Viaggi',this)"><i class="fas fa-plane-departure"></i> Viaggi</button>
-        <button class="pill" onclick="fGal('Moto',this)"><i class="fas fa-motorcycle"></i> Moto</button>
-        <button class="pill" onclick="fGal('Auto',this)"><i class="fas fa-car"></i> Auto</button>
-        <button class="pill" onclick="fGal('Casa',this)"><i class="fas fa-house"></i> Casa</button>
-      </div>
-      <div style="padding:0 20px 10px;font-size:13px;color:var(--text3)" id="gal-count"></div>
-      <div class="photo-grid" id="gal-grid" style="border-radius:var(--r);overflow:hidden"></div>
       <div style="height:8px"></div>
     </div>
 
@@ -452,7 +464,6 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
   <!-- BOTTOM NAV -->
   <nav class="bnav">
     <button class="nav-it on" id="n-home" onclick="nav('home')"><i class="fas fa-house"></i><span>Home</span></button>
-    <button class="nav-it" id="n-gallery" onclick="nav('gallery')"><i class="fas fa-images"></i><span>Foto</span></button>
     <button class="nav-it" id="n-documents" onclick="nav('documents')"><i class="fas fa-folder-open"></i><span>Documenti</span></button>
     <button class="nav-it" id="n-tasks" onclick="nav('tasks')"><i class="fas fa-list-check"></i><span>Attività</span></button>
     <button class="nav-it" id="n-vehicles" onclick="nav('vehicles')"><i class="fas fa-car-side"></i><span>Garage</span></button>
@@ -483,23 +494,9 @@ const DEFAULT = {
     {id:1,title:'Prenotare tagliando Fiat Panda',desc:'Cambio olio + filtri aria',priority:'Alta',due:'2026-07-01',cat:'Veicoli',done:false},
     {id:2,title:'Rinnovare assicurazione moto',desc:'Confrontare preventivi online',priority:'Alta',due:'2026-07-05',cat:'Veicoli',done:false},
     {id:3,title:'Comprare pneumatici invernali',desc:'Misura 205/55 R16',priority:'Media',due:'2026-08-15',cat:'Auto',done:false},
-    {id:4,title:'Backup foto vacanza',desc:'Copia su hard disk esterno',priority:'Bassa',due:'2026-07-20',cat:'Foto',done:false},
+    {id:4,title:'Riordinare armadio stagionale',desc:'Cambio abiti estate/inverno',priority:'Bassa',due:'2026-07-20',cat:'Casa',done:false},
     {id:5,title:'Pagare bolletta luce',desc:'',priority:'Alta',due:'2026-06-30',cat:'Casa',done:true},
     {id:6,title:'Portare moto dal meccanico',desc:'Freno posteriore da controllare',priority:'Media',due:'2026-07-10',cat:'Moto',done:false},
-  ],
-  photos: [
-    {id:1,ic:'fa-sun',name:'Tramonto_Rimini.jpg',date:'2025-08-14',album:'Viaggi',tag:'mare',col:'#ff9f0a'},
-    {id:2,ic:'fa-motorcycle',name:'Honda_CBR.jpg',date:'2025-06-20',album:'Moto',tag:'moto',col:'#bf5af2'},
-    {id:3,ic:'fa-landmark',name:'Roma_Colosseo.jpg',date:'2024-11-03',album:'Viaggi',tag:'storia',col:'#ff9f0a'},
-    {id:4,ic:'fa-pizza-slice',name:'Pizza_Napoletana.jpg',date:'2025-03-18',album:'Viaggi',tag:'cibo',col:'#ff453a'},
-    {id:5,ic:'fa-car',name:'Fiat_Panda.jpg',date:'2025-01-10',album:'Auto',tag:'auto',col:'#30d158'},
-    {id:6,ic:'fa-water',name:'Mare_Sardegna.jpg',date:'2024-07-22',album:'Viaggi',tag:'mare',col:'#5ac8fa'},
-    {id:7,ic:'fa-mountain',name:'Dolomiti_2024.jpg',date:'2024-07-15',album:'Viaggi',tag:'montagna',col:'#30d158'},
-    {id:8,ic:'fa-dog',name:'Cane_Luna.jpg',date:'2025-04-05',album:'Casa',tag:'animali',col:'#ff9f0a'},
-    {id:9,ic:'fa-guitar',name:'Concerto_Rock.jpg',date:'2025-05-30',album:'Viaggi',tag:'musica',col:'#bf5af2'},
-    {id:10,ic:'fa-leaf',name:'Giardino_Casa.jpg',date:'2025-03-01',album:'Casa',tag:'casa',col:'#30d158'},
-    {id:11,ic:'fa-utensils',name:'Pasta_Bolognese.jpg',date:'2025-02-14',album:'Casa',tag:'cibo',col:'#ff9f0a'},
-    {id:12,ic:'fa-tent',name:'Camping_Toscana.jpg',date:'2024-08-10',album:'Viaggi',tag:'natura',col:'#5ac8fa'},
   ],
   docs: [
     {id:1,ic:'fa-id-card',title:"Carta d'Identità",cat:'Identità',date:'2021-10-15',exp:'2031-10-14',note:'Valida per espatrio UE',icCol:'#0a84ff'},
@@ -514,8 +511,8 @@ const DEFAULT = {
   vehicles: [
     {id:1,emoji:'🚗',ic:'fa-car-side',name:'Fiat Panda',model:'1.2 Lounge',year:2018,plate:'AB 123 CD',km:67430,fuel:'Benzina',
      maint:[
-       {date:'2025-11-15',km:65000,type:'Tagliando',cost:280,note:'Olio + filtri'},
-       {date:'2024-08-20',km:58000,type:'Pneumatici',cost:420,note:'4 gomme Michelin'}
+       {date:'2025-11-15',km:65000,type:'Tagliando',note:'Olio + filtri'},
+       {date:'2024-08-20',km:58000,type:'Pneumatici',note:'4 gomme Michelin'}
      ],
      dl:[
        {name:'Assicurazione',date:'2026-07-06'},
@@ -524,7 +521,7 @@ const DEFAULT = {
      ]},
     {id:2,emoji:'🏍️',ic:'fa-motorcycle',name:'Honda CBR 600',model:'CBR 600RR',year:2015,plate:'EF 456 GH',km:32100,fuel:'Benzina',
      maint:[
-       {date:'2025-04-10',km:31000,type:'Tagliando',cost:190,note:'Candele + filtro aria'}
+       {date:'2025-04-10',km:31000,type:'Tagliando',note:'Candele + filtro aria'}
      ],
      dl:[
        {name:'Assicurazione',date:'2026-10-15'},
@@ -543,7 +540,7 @@ const DEFAULT = {
    STATE
    ============================== */
 let D = JSON.parse(JSON.stringify(DEFAULT));
-let curSec = 'home', curGal = 'all', curDocs = 'all', curTasks = 'active';
+let curSec = 'home', curDocs = 'all', curTasks = 'active';
 let deferredInstall = null;
 
 /* ==============================
@@ -597,7 +594,6 @@ function notif(msg) {
    ============================== */
 const NAV_META = {
   home:      {t:'Personal Hub',  s:'Il tuo spazio personale'},
-  gallery:   {t:'Foto',         s:'La tua galleria personale'},
   documents: {t:'Documenti',    s:'Archivio digitale'},
   tasks:     {t:'Attività',     s:'Cose da fare'},
   vehicles:  {t:'Garage',       s:'I tuoi veicoli'},
@@ -618,12 +614,12 @@ function nav(s) {
   document.getElementById('fab').style.display = ['settings','transfer'].includes(s) ? 'none' : 'flex';
   curSec = s;
   document.getElementById('scroll').scrollTop = 0;
+  document.getElementById('topbar').classList.remove('scrolled');
   renderSec(s);
 }
 
 function renderSec(s) {
   if      (s === 'home')      renderHome();
-  else if (s === 'gallery')   renderGallery(curGal);
   else if (s === 'documents') renderDocs(curDocs);
   else if (s === 'tasks')     renderTasks(curTasks);
   else if (s === 'vehicles')  renderVehicles();
@@ -634,7 +630,6 @@ function renderSec(s) {
    ============================== */
 function renderHome() {
   document.getElementById('s-tasks').textContent  = D.tasks.filter(t => !t.done).length;
-  document.getElementById('s-photos').textContent = D.photos.length;
   document.getElementById('s-docs').textContent   = D.docs.length;
   document.getElementById('s-veh').textContent    = D.vehicles.length;
   document.getElementById('disp-name').textContent = D.name || 'Utente';
@@ -663,12 +658,6 @@ function renderHome() {
   const ht = document.getElementById('home-tasks');
   ht.innerHTML = urg.length ? urg.map(t => taskRow(t)).join('') : emptyHTML('fa-party-horn', 'Nessuna attività urgente!');
   attachTaskChecks(ht, () => renderHome());
-
-  // Recent photos
-  document.getElementById('home-photos').innerHTML = D.photos.slice(0,6).map(p =>
-    `<div class="photo-cell" onclick="nav('gallery')" style="background:${p.col}22">
-      <i class="fas ${p.ic}" style="color:${p.col};font-size:26px"></i>
-    </div>`).join('');
 }
 
 /* ==============================
@@ -735,52 +724,6 @@ function deleteTask(id) {
 }
 
 /* ==============================
-   GALLERY
-   ============================== */
-function renderGallery(f) {
-  curGal = f;
-  const list = (f && f !== 'all') ? D.photos.filter(p => {
-    if (f === '2025') return p.date.startsWith('2025');
-    if (f === '2024') return p.date.startsWith('2024');
-    return p.album === f;
-  }) : D.photos;
-  document.getElementById('gal-count').textContent = list.length + ' foto';
-  document.getElementById('gal-grid').innerHTML = list.map(p =>
-    `<div class="photo-cell" onclick="showPhoto(${p.id})" style="background:${p.col}22">
-      <i class="fas ${p.ic}" style="color:${p.col};font-size:26px"></i>
-    </div>`).join('') || emptyHTML('fa-images', 'Nessuna foto in questa categoria');
-}
-
-function fGal(f, btn) {
-  document.querySelectorAll('#gal-pills .pill').forEach(p => p.classList.remove('on'));
-  btn.classList.add('on');
-  renderGallery(f);
-}
-
-function showPhoto(id) {
-  const p = D.photos.find(x => x.id === id); if (!p) return;
-  openModal(p.name, `
-    <div style="text-align:center;padding:20px 0 24px;background:${p.col}18;border-radius:12px;margin-bottom:16px">
-      <i class="fas ${p.ic}" style="font-size:60px;color:${p.col}"></i>
-    </div>
-    <div class="ios-list" style="margin-bottom:14px">
-      <div class="ios-row"><div class="row-body"><div class="row-sub">Nome file</div><div class="row-title">${p.name}</div></div></div>
-      <div class="ios-row"><div class="row-body"><div class="row-sub">Data</div><div class="row-title">${fmtDate(p.date)}</div></div></div>
-      <div class="ios-row"><div class="row-body"><div class="row-sub">Album</div><div class="row-title">${p.album}</div></div></div>
-      <div class="ios-row"><div class="row-body"><div class="row-sub">Tag</div><div class="row-title">#${p.tag}</div></div></div>
-    </div>
-    <div class="btn-row">
-      <button class="ios-btn btn-red" onclick="deletePhoto(${p.id})"><i class="fas fa-trash"></i> Elimina</button>
-      <button class="ios-btn btn-fill" onclick="closeModal()">Chiudi</button>
-    </div>`);
-}
-
-function deletePhoto(id) {
-  D.photos = D.photos.filter(p => p.id !== id);
-  save(); closeModal(); renderGallery(curGal);
-}
-
-/* ==============================
    DOCUMENTS
    ============================== */
 function renderDocs(f) {
@@ -841,7 +784,6 @@ function renderVehicles() {
       <div class="veh-stats">
         <div class="veh-stat"><div class="veh-sv">${v.km.toLocaleString('it-IT')}</div><div class="veh-sl">km totali</div></div>
         <div class="veh-stat"><div class="veh-sv" style="color:${daysColor(v.dl[0].date)}">${daysLeft(v.dl[0].date)}g</div><div class="veh-sl">${v.dl[0].name}</div></div>
-        <div class="veh-stat"><div class="veh-sv">€${v.maint.reduce((s,m) => s+m.cost, 0).toLocaleString('it-IT')}</div><div class="veh-sl">speso</div></div>
       </div>
     </div>`).join('') || emptyHTML('fa-car-side', 'Nessun veicolo aggiunto');
   renderInventory();
@@ -871,7 +813,6 @@ function showVeh(id) {
         <div class="ios-row">
           <div class="row-ic" style="background:rgba(191,90,242,.15)"><i class="fas fa-wrench" style="color:var(--purple)"></i></div>
           <div class="row-body"><div class="row-sub">${fmtDate(m.date)} · ${m.km.toLocaleString('it-IT')} km</div><div class="row-title">${m.type} — ${m.note}</div></div>
-          <span style="font-weight:700;color:var(--orange)">€${m.cost}</span>
         </div>`).join('') : '<div class="ios-row"><div class="row-body"><div class="row-title" style="color:var(--text3)">Nessuna manutenzione registrata</div></div></div>'}
     </div>
     <button class="ios-btn btn-fill" style="width:100%" onclick="closeModal()">Chiudi</button>`);
@@ -919,8 +860,7 @@ function deleteInv(id) {
    ============================== */
 function openAdd() {
   const s = curSec;
-  if      (s === 'gallery')   openAddPhoto();
-  else if (s === 'documents') openAddDoc();
+  if      (s === 'documents') openAddDoc();
   else if (s === 'tasks')     openAddTask();
   else if (s === 'vehicles')  openAddVehicle();
   else                        openAddTask();
@@ -937,7 +877,7 @@ function openAddTask() {
     <label class="flbl">Scadenza</label>
     <input class="finp" id="f-due" type="date">
     <label class="flbl">Categoria</label>
-    <select class="fsel" id="f-c"><option>Casa</option><option>Lavoro</option><option>Veicoli</option><option>Salute</option><option>Personale</option><option>Moto</option><option>Foto</option></select>
+    <select class="fsel" id="f-c"><option>Casa</option><option>Lavoro</option><option>Veicoli</option><option>Salute</option><option>Personale</option><option>Moto</option></select>
     <div class="btn-row">
       <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
       <button class="ios-btn btn-blue" onclick="addTask()"><i class="fas fa-plus"></i> Aggiungi</button>
@@ -952,37 +892,6 @@ function addTask() {
     cat:document.getElementById('f-c').value, done:false});
   save(); closeModal(); renderTasks(curTasks);
   notif('✅ Attività aggiunta');
-}
-
-function openAddPhoto() {
-  openModal('Aggiungi foto', `
-    <label class="flbl">Nome file</label>
-    <input class="finp" id="f-n" type="text" placeholder="Foto_nome.jpg">
-    <label class="flbl">Icona Font Awesome (es. fa-sun)</label>
-    <input class="finp" id="f-ic" type="text" value="fa-image">
-    <label class="flbl">Colore icona</label>
-    <input class="finp" id="f-cl" type="color" value="#0a84ff" style="height:50px;padding:6px">
-    <label class="flbl">Album</label>
-    <select class="fsel" id="f-al"><option>Viaggi</option><option>Auto</option><option>Moto</option><option>Casa</option><option>Famiglia</option><option>Lavoro</option></select>
-    <label class="flbl">Tag</label>
-    <input class="finp" id="f-tg" type="text" placeholder="vacanza, estate...">
-    <div class="btn-row">
-      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
-      <button class="ios-btn btn-blue" onclick="addPhoto()"><i class="fas fa-plus"></i> Aggiungi</button>
-    </div>`);
-}
-
-function addPhoto() {
-  D.photos.unshift({id:Date.now(),
-    ic:document.getElementById('f-ic').value||'fa-image',
-    name:document.getElementById('f-n').value||'Foto.jpg',
-    date:new Date().toISOString().split('T')[0],
-    album:document.getElementById('f-al').value,
-    tag:document.getElementById('f-tg').value||'foto',
-    col:document.getElementById('f-cl').value
-  });
-  save(); closeModal(); renderGallery(curGal);
-  notif('📸 Foto aggiunta');
 }
 
 const DOC_ICONS = {Identità:['fa-id-card','#0a84ff'],Casa:['fa-house','#ff9f0a'],Veicoli:['fa-car','#30d158'],Lavoro:['fa-briefcase','#5ac8fa'],Contratti:['fa-file-contract','#5e5ce6'],Garanzie:['fa-shield-halved','#ff453a'],Fatture:['fa-receipt','#bf5af2']};
@@ -1178,7 +1087,7 @@ function confirmDeleteAll() {
       <i class="fas fa-triangle-exclamation" style="font-size:48px;color:var(--red);display:block;margin-bottom:14px"></i>
       <div style="font-size:17px;font-weight:600;margin-bottom:10px">Sei assolutamente sicuro?</div>
       <div style="font-size:14px;color:var(--text3);line-height:1.6;max-width:280px;margin:0 auto">
-        Verranno eliminati definitivamente tutte le attività, foto, documenti, veicoli SOLO dell'applicazione<br><br>
+        Verranno eliminati definitivamente tutte le attività, documenti, veicoli SOLO dell'applicazione<br><br>
         <strong style="color:var(--red)">Questa azione non può essere annullata.</strong>
       </div>
     </div>
@@ -1189,7 +1098,7 @@ function confirmDeleteAll() {
 }
 
 function deleteAllData() {
-  D.tasks = []; D.photos = []; D.docs = [];
+  D.tasks = []; D.docs = [];
   D.vehicles = []; D.inventory = []; D.name = 'Utente';
   try { localStorage.removeItem('ph_v2'); } catch(e) {}
   closeModal(); nav('home');
@@ -1214,8 +1123,6 @@ function doSearch(q) {
     res.push({ic:'fa-list-check', col:'var(--blue)', text:t.title, sub:'Attività · '+t.priority}));
   D.docs.filter(d => d.title.toLowerCase().includes(ql)).forEach(d =>
     res.push({ic:d.ic, col:d.icCol, text:d.title, sub:'Documento · '+d.cat}));
-  D.photos.filter(p => p.name.toLowerCase().includes(ql)||p.album.toLowerCase().includes(ql)).forEach(p =>
-    res.push({ic:p.ic, col:p.col, text:p.name, sub:'Foto · '+p.album}));
   D.vehicles.filter(v => v.name.toLowerCase().includes(ql)).forEach(v =>
     res.push({ic:v.ic, col:'var(--purple)', text:v.name, sub:'Veicolo'}));
   D.inventory.filter(i => i.name.toLowerCase().includes(ql)).forEach(i =>
@@ -1301,6 +1208,13 @@ self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r
   const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
   document.getElementById('manifest-link').href = URL.createObjectURL(blob);
 })();
+
+/* ==============================
+   TOPBAR SCROLL EFFECT
+   ============================== */
+document.getElementById('scroll').addEventListener('scroll', e => {
+  document.getElementById('topbar').classList.toggle('scrolled', e.target.scrollTop > 8);
+}, {passive:true});
 
 /* ==============================
    INIT
