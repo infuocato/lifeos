@@ -6,386 +6,234 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="LifeOS">
-<meta name="theme-color" content="#000000">
-<link rel="apple-touch-icon" href="/favicon.png">
-<link rel="apple-touch-icon" href="https://via.placeholder.com/180x180/0A84FF/fff?text=MF">
-<meta name="description" content="Il tuo spazio personale digitale — documenti, attività, veicoli e molto altro.">
-<title>LIFEOS</title>
-
-<!-- Font Awesome 6 (CDN) -->
+<meta name="theme-color" content="#f5f5f7">
+<meta name="description" content="Il tuo spazio personale digitale — documenti, attività, finanze e veicoli.">
+<title>LifeOS</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-<!-- PWA Manifest inline via JS -->
-<link rel="manifest" id="manifest-link">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230a84ff'/><text y='.9em' font-size='70' x='12'>🏠</text></svg>">
-
 <style>
-/* ===== RESET & ROOT ===== */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+/* ===== THEME TOKENS — light is base, dark overrides ===== */
 :root{
-  --bg:#000000;--bg2:#161618;--bg3:#232326;--bg4:#2f2f33;
-  --sep:rgba(255,255,255,0.11);--sep2:rgba(255,255,255,0.07);--hair:rgba(255,255,255,0.08);
-  --blue:#0a84ff;--green:#32d74b;--orange:#ff9f0a;--red:#ff453a;
-  --yellow:#ffd60a;--purple:#bf5af2;--teal:#64d2ff;--indigo:#5e5ce6;
-  --text:#f5f5f7;--text2:rgba(245,245,247,0.82);--text3:rgba(245,245,247,0.52);--text4:rgba(245,245,247,0.26);
-  --fill:rgba(255,255,255,0.055);--fill2:rgba(255,255,255,0.09);
-  --r:18px;--r-lg:24px;--r-sm:13px;--r-xs:9px;--r-pill:100px;
+  --bg:#f2f2f7;--bg2:#ffffff;--bg3:#f2f2f7;--bg4:#e5e5ea;
+  --sep:rgba(60,60,67,.22);--sep2:rgba(60,60,67,.13);--hair:rgba(60,60,67,.10);
+  --blue:#007aff;--green:#34c759;--orange:#ff9500;--red:#ff3b30;--yellow:#ffcc00;--purple:#af52de;--teal:#32ade6;--indigo:#5856d6;
+  --text:#000000;--text2:rgba(0,0,0,.78);--text3:rgba(60,60,67,.6);--text4:rgba(60,60,67,.3);
+  --fill:rgba(60,60,67,.06);--fill2:rgba(60,60,67,.1);
+  --r:20px;--r-lg:26px;--r-sm:14px;--r-pill:100px;
   --ease:cubic-bezier(.32,.72,0,1);
-  --safe-top:env(safe-area-inset-top,0px);
-  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);
+  --nav-blur:rgba(255,255,255,.75);
+  color-scheme:light;
+}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#000000;--bg2:#1c1c1e;--bg3:#2c2c2e;--bg4:#3a3a3c;
+    --sep:rgba(255,255,255,.14);--sep2:rgba(255,255,255,.09);--hair:rgba(255,255,255,.08);
+    --text:#ffffff;--text2:rgba(255,255,255,.82);--text3:rgba(255,255,255,.55);--text4:rgba(255,255,255,.28);
+    --fill:rgba(255,255,255,.07);--fill2:rgba(255,255,255,.11);
+    --nav-blur:rgba(28,28,30,.72);color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#000000;--bg2:#1c1c1e;--bg3:#2c2c2e;--bg4:#3a3a3c;
+  --sep:rgba(255,255,255,.14);--sep2:rgba(255,255,255,.09);--hair:rgba(255,255,255,.08);
+  --text:#ffffff;--text2:rgba(255,255,255,.82);--text3:rgba(255,255,255,.55);--text4:rgba(255,255,255,.28);
+  --fill:rgba(255,255,255,.07);--fill2:rgba(255,255,255,.11);
+  --nav-blur:rgba(28,28,30,.72);color-scheme:dark;
 }
 html,body{height:100%;overflow:hidden}
-body{
-  font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif;
-  background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;
-  font-feature-settings:'ss01' 1;
-}
-
-/* ===== PHONE SHELL ===== */
-.phone{
-  max-width:430px;margin:0 auto;height:100dvh;
-  display:flex;flex-direction:column;
-  background:var(--bg);position:relative;overflow:hidden;
-}
-
-/* ===== STATUS BAR ===== */
-.statusbar{
-  flex-shrink:0;
-  padding:calc(var(--safe-top) + 8px) 20px 6px;
-  display:flex;align-items:center;justify-content:space-between;
-  min-height:44px;
-}
-.sb-time{font-size:15px;font-weight:600;letter-spacing:-.2px}
-.sb-icons{display:flex;align-items:center;gap:5px;font-size:13px}
-
-/* ===== TOP BAR ===== */
-.topbar{
-  flex-shrink:0;padding:2px 20px 14px;
-  display:flex;align-items:flex-end;justify-content:space-between;
-  position:relative;z-index:40;transition:background .25s var(--ease),border-color .25s var(--ease);
-  border-bottom:.5px solid transparent;
-}
-.topbar.scrolled{
-  background:rgba(10,10,12,.78);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border-bottom-color:var(--sep2);
-}
-.tb-left .tb-title{font-size:32px;font-weight:700;letter-spacing:-.7px;line-height:1.08;transition:font-size .2s var(--ease)}
-.topbar.scrolled .tb-left .tb-title{font-size:20px}
-.tb-left .tb-sub{font-size:13px;color:var(--text3);margin-top:4px;letter-spacing:-.1px;font-weight:450;transition:opacity .2s var(--ease),height .2s var(--ease)}
-.topbar.scrolled .tb-left .tb-sub{opacity:0;height:0;margin:0;overflow:hidden}
-.tb-actions{display:flex;gap:8px;padding-bottom:5px}
-.tb-btn{
-  width:34px;height:34px;border-radius:50%;
-  background:var(--fill2);border:none;
-  color:var(--text2);font-size:14px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:transform .15s var(--ease),background .15s;
-}
+body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;transition:background .25s var(--ease),color .25s var(--ease)}
+.phone{max-width:430px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:var(--bg);position:relative;overflow:hidden}
+.statusbar{flex-shrink:0;padding:calc(var(--safe-top) + 8px) 22px 4px;min-height:28px}
+.topbar{flex-shrink:0;padding:4px 22px 16px;display:flex;align-items:flex-end;justify-content:space-between;position:relative;z-index:40;transition:background .25s var(--ease),border-color .25s var(--ease);border-bottom:.5px solid transparent}
+.topbar.scrolled{background:var(--nav-blur);backdrop-filter:blur(26px) saturate(1.8);-webkit-backdrop-filter:blur(26px) saturate(1.8);border-bottom-color:var(--sep2)}
+.tb-title{font-size:34px;font-weight:800;letter-spacing:-1px;line-height:1.05;transition:font-size .2s var(--ease)}
+.topbar.scrolled .tb-title{font-size:19px}
+.tb-sub{font-size:13.5px;color:var(--text3);margin-top:4px;font-weight:500;transition:opacity .2s,height .2s}
+.topbar.scrolled .tb-sub{opacity:0;height:0;margin:0;overflow:hidden}
+.tb-actions{display:flex;gap:8px;padding-bottom:6px}
+.tb-btn{width:36px;height:36px;border-radius:50%;background:var(--fill2);border:none;color:var(--text2);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s,background .15s}
 .tb-btn:active{transform:scale(.9);background:var(--fill)}
-
-/* ===== SCROLL AREA ===== */
-.scroll{
-  flex:1;overflow-y:auto;overflow-x:hidden;
-  -webkit-overflow-scrolling:touch;
-  padding-bottom:calc(104px + var(--safe-bottom));
-  scroll-behavior:smooth;
-}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(108px + var(--safe-bottom));scroll-behavior:smooth}
 .scroll::-webkit-scrollbar{display:none}
-
-/* ===== SECTIONS ===== */
 .sec{display:none;animation:fadeIn .35s var(--ease)}
 .sec.on{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-/* ===== STAT GRID ===== */
-.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:2px 16px 4px}
-.stat-card{
-  background:var(--bg2);border-radius:var(--r-sm);padding:14px 10px;
-  box-shadow:inset 0 0 0 1px var(--hair);
-  transition:transform .15s var(--ease);
-}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:2px 18px 6px}
+.stat-card{background:var(--bg2);border-radius:var(--r-sm);padding:15px 12px;box-shadow:0 1px 2px rgba(0,0,0,.04),inset 0 0 0 1px var(--hair);transition:transform .15s}
 .stat-card:active{transform:scale(.96)}
-.stat-ic{
-  width:30px;height:30px;border-radius:9px;margin-bottom:9px;
-  display:flex;align-items:center;justify-content:center;font-size:14px;
-}
-.stat-val{font-size:22px;font-weight:700;letter-spacing:-.4px;line-height:1;font-variant-numeric:tabular-nums}
-.stat-lbl{font-size:11.5px;color:var(--text3);margin-top:5px;line-height:1.3;font-weight:450}
+.stat-ic{width:28px;height:28px;border-radius:9px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.stat-val{font-size:21px;font-weight:700;letter-spacing:-.4px;line-height:1;font-variant-numeric:tabular-nums}
+.stat-lbl{font-size:11px;color:var(--text3);margin-top:5px;line-height:1.3;font-weight:500}
 
-/* ===== SECTION HEADER ===== */
-.grp-hdr{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:22px 20px 10px;
-  font-size:13px;font-weight:600;color:var(--text2);
-  letter-spacing:-.2px;
-}
-.grp-hdr.first{padding-top:14px}
-.grp-hdr i{opacity:.9}
-.grp-link{font-size:14px;font-weight:500;color:var(--blue);letter-spacing:0;cursor:pointer;display:flex;align-items:center;gap:3px}
+.grp-hdr{display:flex;align-items:center;justify-content:space-between;padding:24px 22px 10px;font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px}
+.grp-hdr.first{padding-top:16px}
+.grp-hdr span:first-child{display:flex;align-items:center;gap:7px}
+.grp-link{font-size:13.5px;font-weight:600;color:var(--blue);cursor:pointer;display:flex;align-items:center;gap:3px;text-transform:none;letter-spacing:0}
 
-/* ===== IOS LIST ===== */
-.ios-list{margin:0 16px 14px;background:var(--bg2);border-radius:var(--r-sm);overflow:hidden;box-shadow:inset 0 0 0 1px var(--hair)}
-.ios-row{
-  display:flex;align-items:center;gap:12px;padding:12px 16px;
-  cursor:pointer;position:relative;
-  transition:background .12s;min-height:54px;
-}
-.ios-row:not(:last-child)::after{
-  content:'';position:absolute;left:16px;right:0;bottom:0;height:.5px;background:var(--sep2);
-}
-.ios-row:has(.row-ic):not(:last-child)::after{left:60px}
+.ios-list{margin:0 18px 16px;background:var(--bg2);border-radius:var(--r-sm);overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04),inset 0 0 0 1px var(--hair)}
+.ios-row{display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer;position:relative;transition:background .12s;min-height:56px}
+.ios-row:not(:last-child)::after{content:'';position:absolute;left:16px;right:0;bottom:0;height:.5px;background:var(--sep2)}
+.ios-row:has(.row-ic):not(:last-child)::after{left:61px}
 .ios-row:active{background:var(--fill)}
-.row-ic{
-  width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-  font-size:15px;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);
-  position:relative;
-}
+.row-ic{width:35px;height:35px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
 .row-body{flex:1;min-width:0}
-.row-title{font-size:16px;color:var(--text);font-weight:450;letter-spacing:-.1px}
-.row-sub{font-size:13.5px;color:var(--text3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.row-right{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.row-title{font-size:16px;color:var(--text);font-weight:500;letter-spacing:-.2px}
+.row-sub{font-size:13px;color:var(--text3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .row-chev{color:var(--text4);font-size:12px}
-.badge{font-size:12px;font-weight:600;padding:4px 10px;border-radius:var(--r-pill);line-height:1.4;white-space:nowrap;letter-spacing:-.1px}
+.badge{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:var(--r-pill);white-space:nowrap}
 
-/* ===== CHECK CIRCLE ===== */
 .chk{width:24px;height:24px;border-radius:50%;border:1.75px solid var(--sep);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .2s var(--ease)}
 .chk.done{background:var(--green);border-color:var(--green);transform:scale(1.05)}
 .chk.done i{display:block;font-size:11px;color:#fff}
 .chk:not(.done) i{display:none}
 
-/* ===== PILLS ===== */
-.pills{display:flex;gap:8px;padding:2px 16px 16px;overflow-x:auto;scrollbar-width:none}
+.pills{display:flex;gap:8px;padding:2px 18px 16px;overflow-x:auto;scrollbar-width:none}
 .pills::-webkit-scrollbar{display:none}
-.pill{
-  padding:8px 16px;border-radius:var(--r-pill);font-size:13.5px;font-weight:500;
-  border:none;background:var(--fill2);color:var(--text2);
-  cursor:pointer;white-space:nowrap;transition:all .18s var(--ease);flex-shrink:0;
-  box-shadow:inset 0 0 0 1px var(--hair);
-}
+.pill{padding:9px 16px;border-radius:var(--r-pill);font-size:13.5px;font-weight:600;border:none;background:var(--fill2);color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .18s var(--ease);flex-shrink:0}
 .pill:active{transform:scale(.94)}
-.pill.on{background:var(--blue);color:#fff;box-shadow:none}
+.pill.on{background:var(--blue);color:#fff}
 
-/* ===== VEHICLE CARD ===== */
-.veh-card{margin:0 16px 14px;background:var(--bg2);border-radius:var(--r);overflow:hidden;cursor:pointer;box-shadow:inset 0 0 0 1px var(--hair);transition:transform .15s var(--ease)}
+/* VEHICLE */
+.veh-card{margin:0 18px 16px;border-radius:var(--r-lg);overflow:hidden;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.06),inset 0 0 0 1px var(--hair);transition:transform .15s var(--ease);background:var(--bg2)}
 .veh-card:active{transform:scale(.985)}
-.veh-top{padding:18px 18px 6px;display:flex;justify-content:space-between;align-items:flex-start}
-.veh-name{font-size:20px;font-weight:700;letter-spacing:-.4px}
-.veh-model{font-size:13.5px;color:var(--text3);margin-top:3px}
-.veh-plate{background:var(--bg4);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;font-family:ui-monospace,monospace;letter-spacing:1.5px;box-shadow:inset 0 0 0 1px var(--hair)}
-.veh-emoji{font-size:52px;text-align:center;padding:10px 0 16px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))}
-.veh-stats{display:grid;grid-template-columns:repeat(2,1fr);border-top:.5px solid var(--sep2)}
-.veh-stat{padding:13px 6px;text-align:center}
+.veh-hero{padding:22px 20px 12px;position:relative}
+.veh-top{display:flex;justify-content:space-between;align-items:flex-start}
+.veh-name{font-size:21px;font-weight:700;letter-spacing:-.4px}
+.veh-model{font-size:13px;color:var(--text3);margin-top:3px}
+.veh-plate{background:var(--fill2);border-radius:8px;padding:6px 12px;font-size:12.5px;font-weight:700;font-family:ui-monospace,monospace;letter-spacing:1.5px}
+.veh-emoji{font-size:44px;text-align:center;padding:10px 0 4px}
+.veh-next{margin:0 20px 16px;font-size:12px;font-weight:700;padding:6px 12px;border-radius:var(--r-pill);display:inline-flex;align-items:center;gap:6px}
+.veh-stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:.5px solid var(--sep2)}
+.veh-stat{padding:14px 6px;text-align:center}
 .veh-stat+.veh-stat{border-left:.5px solid var(--sep2)}
-.veh-sv{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
-.veh-sl{font-size:11.5px;color:var(--text3);margin-top:3px}
+.veh-sv{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.veh-sl{font-size:10.5px;color:var(--text3);margin-top:3px}
 
-/* ===== DEADLINES ===== */
 .dl-row{display:flex;align-items:center;gap:14px;padding:13px 16px;position:relative}
 .dl-row:not(:last-child)::after{content:'';position:absolute;left:16px;right:0;bottom:0;height:.5px;background:var(--sep2)}
 .dl-days{min-width:44px;text-align:center}
-.dl-num{font-size:21px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
-.dl-lbl{font-size:10px;color:var(--text3);margin-top:3px;font-weight:500}
+.dl-num{font-size:20px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.dl-lbl{font-size:10px;color:var(--text3);margin-top:3px;font-weight:600}
 .dl-info{flex:1}
 .dl-name{font-size:15px;font-weight:500;letter-spacing:-.1px}
 .dl-date{font-size:12.5px;color:var(--text3);margin-top:2px}
 
-/* ===== TRANSFER ===== */
-.xfer-card{margin:0 16px 12px;background:var(--bg2);border-radius:var(--r);padding:24px;text-align:center;box-shadow:inset 0 0 0 1px var(--hair)}
-.qr-box{width:160px;height:160px;background:#fff;border-radius:20px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
-.prog-bar{height:4px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-top:6px}
-.prog-fill{height:100%;border-radius:4px}
+/* FINANCE */
+.fin-hero{margin:2px 18px 14px;background:linear-gradient(135deg,var(--blue),var(--indigo));border-radius:var(--r-lg);padding:22px;color:#fff;box-shadow:0 8px 20px -6px rgba(0,122,255,.4)}
+.fin-hero-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.fin-hero-lbl{font-size:12.5px;color:rgba(255,255,255,.75);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.fin-hero-val{font-size:30px;font-weight:700;letter-spacing:-.6px;margin-top:4px;font-variant-numeric:tabular-nums}
+.fin-hero .tb-btn{background:rgba(255,255,255,.18);color:#fff}
+.fin-bar{height:8px;background:rgba(255,255,255,.22);border-radius:6px;overflow:hidden;margin:6px 0 8px}
+.fin-bar-fill{height:100%;border-radius:6px;background:#fff;transition:width .3s var(--ease)}
+.fin-hero-foot{display:flex;justify-content:space-between;font-size:12.5px;color:rgba(255,255,255,.85);font-weight:500}
+.fin-split{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px 4px}
+.fin-mini{background:var(--bg2);border-radius:var(--r-sm);padding:14px 15px;box-shadow:0 1px 2px rgba(0,0,0,.04),inset 0 0 0 1px var(--hair)}
+.fin-mini-lbl{font-size:11.5px;color:var(--text3);display:flex;align-items:center;gap:6px;font-weight:600}
+.fin-mini-val{font-size:19px;font-weight:700;margin-top:6px;font-variant-numeric:tabular-nums}
+.txn-amt{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
 
-/* ===== SETTINGS ===== */
-.set-section{margin:0 16px 8px}
-.set-title{font-size:13px;font-weight:600;color:var(--text2);letter-spacing:-.1px;padding:20px 4px 9px}
-.set-list{background:var(--bg2);border-radius:var(--r-sm);overflow:hidden;box-shadow:inset 0 0 0 1px var(--hair)}
-.set-row{display:flex;align-items:center;gap:13px;padding:13px 16px;cursor:pointer;transition:background .12s;min-height:54px;position:relative}
-.set-row:not(:last-child)::after{content:'';position:absolute;left:59px;right:0;bottom:0;height:.5px;background:var(--sep2)}
+/* SETTINGS */
+.set-section{margin:0 18px 8px}
+.set-title{font-size:13px;font-weight:700;color:var(--text3);padding:20px 4px 9px;text-transform:uppercase;letter-spacing:.4px}
+.set-list{background:var(--bg2);border-radius:var(--r-sm);overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04),inset 0 0 0 1px var(--hair)}
+.set-row{display:flex;align-items:center;gap:13px;padding:14px 16px;cursor:pointer;transition:background .12s;min-height:56px;position:relative}
+.set-row:not(:last-child)::after{content:'';position:absolute;left:60px;right:0;bottom:0;height:.5px;background:var(--sep2)}
 .set-row:active{background:var(--fill)}
 .set-ic{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;flex-shrink:0}
 .set-info{flex:1}
-.set-label{font-size:16px;color:var(--text);font-weight:450;letter-spacing:-.1px}
+.set-label{font-size:16px;color:var(--text);font-weight:500}
 .set-sub{font-size:13px;color:var(--text3);margin-top:1px}
+.theme-seg{display:flex;gap:6px;padding:12px 16px 14px}
+.theme-opt{flex:1;text-align:center;padding:12px 6px;border-radius:12px;background:var(--fill);cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text2);transition:all .15s}
+.theme-opt i{display:block;font-size:16px;margin-bottom:5px}
+.theme-opt.on{background:var(--blue);color:#fff}
 
-/* ===== FAB ===== */
-.fab{
-  position:fixed;bottom:calc(108px + var(--safe-bottom));
-  right:calc(50% - 215px + 18px);
-  width:56px;height:56px;border-radius:50%;
-  background:var(--blue);color:#fff;font-size:22px;
-  border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 8px 20px -4px rgba(10,132,255,.55),0 2px 6px rgba(0,0,0,.3);
-  transition:transform .2s var(--ease);z-index:50;
-}
+.fab{position:fixed;bottom:calc(112px + var(--safe-bottom));right:calc(50% - 215px + 18px);width:56px;height:56px;border-radius:50%;background:var(--blue);color:#fff;font-size:22px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px -4px rgba(0,122,255,.5),0 2px 6px rgba(0,0,0,.15);transition:transform .2s var(--ease);z-index:50}
 .fab:active{transform:scale(.9)}
 @media(max-width:430px){.fab{right:18px}}
 
-/* ===== BOTTOM NAV ===== */
-.bnav{
-  position:fixed;bottom:calc(14px + var(--safe-bottom));left:50%;transform:translateX(-50%);
-  width:calc(430px - 28px);max-width:calc(100% - 28px);
-  background:rgba(28,28,32,.72);
-  border-radius:28px;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.09),0 12px 32px -8px rgba(0,0,0,.55);
-  backdrop-filter:blur(30px) saturate(1.6);-webkit-backdrop-filter:blur(30px) saturate(1.6);
-  padding:10px 6px;
-  display:flex;justify-content:space-around;z-index:100;
-}
-.nav-it{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 8px;border:none;background:none;min-width:52px;border-radius:16px;transition:background .15s var(--ease)}
-.nav-it i{font-size:21px;color:var(--text4);transition:color .2s,transform .2s var(--ease)}
-.nav-it span{font-size:10px;font-weight:500;color:var(--text4);transition:color .2s;letter-spacing:-.1px}
+.bnav{position:fixed;bottom:calc(16px + var(--safe-bottom));left:50%;transform:translateX(-50%);width:calc(430px - 24px);max-width:calc(100% - 24px);background:var(--nav-blur);border-radius:26px;box-shadow:0 12px 32px -8px rgba(0,0,0,.18),inset 0 0 0 1px var(--hair);backdrop-filter:blur(30px) saturate(1.8);-webkit-backdrop-filter:blur(30px) saturate(1.8);padding:9px 4px;display:flex;justify-content:space-around;z-index:100}
+.nav-it{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 6px;border:none;background:none;min-width:44px;border-radius:16px}
+.nav-it i{font-size:19px;color:var(--text4);transition:color .2s,transform .2s var(--ease)}
+.nav-it span{font-size:9.5px;font-weight:600;color:var(--text4);transition:color .2s}
 .nav-it.on i,.nav-it.on span{color:var(--blue)}
 .nav-it.on i{transform:translateY(-1px)}
 .nav-it:active{transform:scale(.92)}
 
-/* ===== MODAL ===== */
-.modal-wrap{
-  position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);
-  z-index:200;display:none;align-items:flex-end;justify-content:center;
-}
+.modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.42);backdrop-filter:blur(3px);z-index:200;display:none;align-items:flex-end;justify-content:center}
 .modal-wrap.on{display:flex}
-.modal-sheet{
-  background:var(--bg2);border-radius:28px 28px 0 0;
-  width:100%;max-width:430px;
-  max-height:90dvh;overflow-y:auto;
-  padding:0 0 calc(28px + var(--safe-bottom));
-  box-shadow:0 -8px 40px rgba(0,0,0,.5);
-  animation:slideUp .38s var(--ease);
-}
+.modal-sheet{background:var(--bg2);border-radius:28px 28px 0 0;width:100%;max-width:430px;max-height:90dvh;overflow-y:auto;padding:0 0 calc(28px + var(--safe-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.25);animation:slideUp .38s var(--ease)}
 .modal-sheet::-webkit-scrollbar{display:none}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .modal-handle{width:36px;height:5px;background:var(--sep);border-radius:4px;margin:12px auto 16px}
-.modal-title{font-size:18px;font-weight:650;letter-spacing:-.3px;text-align:center;padding:0 20px 16px;color:var(--text)}
-.modal-body{padding:0 16px}
+.modal-title{font-size:18px;font-weight:700;text-align:center;padding:0 20px 16px;color:var(--text)}
+.modal-body{padding:0 18px}
 
-/* ===== FORMS ===== */
-.flbl{font-size:13px;color:var(--text3);margin-bottom:6px;display:block;padding-left:4px;font-weight:500}
-.finp{
-  width:100%;background:var(--bg3);border:none;color:var(--text);
-  padding:14px 15px;border-radius:var(--r-sm);font-size:16px;
-  outline:none;font-family:inherit;margin-bottom:14px;
-  box-shadow:inset 0 0 0 1px var(--hair);
-  -webkit-appearance:none;transition:box-shadow .15s;
-}
+.flbl{font-size:13px;color:var(--text3);margin-bottom:6px;display:block;padding-left:4px;font-weight:600}
+.finp{width:100%;background:var(--bg3);border:none;color:var(--text);padding:14px 15px;border-radius:var(--r-sm);font-size:16px;outline:none;font-family:inherit;margin-bottom:14px;box-shadow:inset 0 0 0 1px var(--hair);-webkit-appearance:none}
 .finp::placeholder{color:var(--text4)}
 .finp:focus{box-shadow:inset 0 0 0 1.5px var(--blue)}
-.fsel{
-  width:100%;background:var(--bg3);border:none;color:var(--text);
-  padding:14px 15px;border-radius:var(--r-sm);font-size:16px;
-  outline:none;font-family:inherit;margin-bottom:14px;
-  box-shadow:inset 0 0 0 1px var(--hair);
-  -webkit-appearance:none;appearance:none;
-}
+.fsel{width:100%;background:var(--bg3);border:none;color:var(--text);padding:14px 15px;border-radius:var(--r-sm);font-size:16px;outline:none;font-family:inherit;margin-bottom:14px;box-shadow:inset 0 0 0 1px var(--hair);-webkit-appearance:none;appearance:none}
+.seg{display:flex;gap:8px;margin-bottom:14px}
+.seg button{flex:1;padding:12px;border-radius:var(--r-sm);border:none;background:var(--fill2);color:var(--text2);font-weight:700;font-size:14px;cursor:pointer}
+.seg button.on{background:var(--blue);color:#fff}
 .btn-row{display:flex;gap:10px;margin-top:4px}
-.ios-btn{flex:1;padding:15px;border-radius:var(--r-sm);font-size:16px;font-weight:600;letter-spacing:-.1px;border:none;cursor:pointer;font-family:inherit;transition:transform .15s var(--ease),opacity .15s}
+.ios-btn{flex:1;padding:15px;border-radius:var(--r-sm);font-size:16px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:transform .15s var(--ease),opacity .15s}
 .ios-btn:active{transform:scale(.97);opacity:.85}
 .btn-blue{background:var(--blue);color:#fff}
 .btn-red{background:var(--red);color:#fff}
 .btn-fill{background:var(--fill2);color:var(--text)}
 
-/* ===== EMPTY STATE ===== */
-.empty{text-align:center;padding:52px 20px}
-.empty i{
-  width:64px;height:64px;border-radius:50%;background:var(--fill2);
-  display:flex;align-items:center;justify-content:center;
-  font-size:26px;color:var(--text3);margin:0 auto 16px;
-}
-.empty p{font-size:15px;color:var(--text3);font-weight:450}
+.empty{text-align:center;padding:54px 20px}
+.empty i{width:62px;height:62px;border-radius:50%;background:var(--fill2);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--text3);margin:0 auto 16px}
+.empty p{font-size:15px;color:var(--text3);font-weight:500}
 
-/* ===== NOTIFICATION ===== */
-.notif{
-  position:fixed;top:calc(var(--safe-top) + 14px);left:50%;transform:translateX(-50%) translateY(-14px) scale(.96);
-  background:rgba(40,40,44,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border:.5px solid var(--sep);color:var(--text);
-  padding:12px 22px;border-radius:var(--r-pill);
-  font-size:14px;font-weight:500;z-index:500;
-  opacity:0;transition:all .35s var(--ease);pointer-events:none;white-space:nowrap;
-  box-shadow:0 8px 28px rgba(0,0,0,.45);
-}
+.notif{position:fixed;top:calc(var(--safe-top) + 14px);left:50%;transform:translateX(-50%) translateY(-14px) scale(.96);background:var(--nav-blur);backdrop-filter:blur(20px);border:.5px solid var(--sep);color:var(--text);padding:12px 22px;border-radius:var(--r-pill);font-size:14px;font-weight:600;z-index:500;opacity:0;transition:all .35s var(--ease);pointer-events:none;white-space:nowrap;box-shadow:0 8px 28px rgba(0,0,0,.18)}
 .notif.on{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
-
-/* ===== INSTALL BANNER ===== */
-.install-bar{
-  margin:0 16px 14px;background:linear-gradient(135deg,rgba(10,132,255,.22),rgba(10,132,255,.06));
-  box-shadow:inset 0 0 0 1px rgba(10,132,255,.35);border-radius:var(--r);padding:15px 16px;
-  display:flex;align-items:center;gap:12px;cursor:pointer;
-}
-.install-bar .ib-icon{font-size:26px;flex-shrink:0}
-.install-bar .ib-text{flex:1}
-.install-bar .ib-title{font-size:14px;font-weight:600;color:var(--blue);letter-spacing:-.1px}
-.install-bar .ib-sub{font-size:12.5px;color:var(--text3);margin-top:2px}
-.install-bar .ib-close{font-size:18px;color:var(--text3);padding:4px}
-
-/* ===== RESPONSIVE ===== */
 @media(min-width:431px){.phone{border-left:1px solid var(--sep2);border-right:1px solid var(--sep2)}}
 </style>
 </head>
 <body>
 <div class="phone">
-
-  <!-- STATUS BAR -->
-  <div class="statusbar">
-    
-  </div>
-
-  <!-- TOP BAR -->
+  <div class="statusbar"></div>
   <div class="topbar" id="topbar">
     <div class="tb-left">
       <div class="tb-title" id="tb-title">LifeOS</div>
       <div class="tb-sub" id="tb-sub">La tua vita in un unico spazio privato</div>
     </div>
     <div class="tb-actions">
-      <button class="tb-btn" onclick="openSearch()" aria-label="Cerca"><i class="fas fa-magnifying-glass"></i></button>
+      <button class="tb-btn" id="tb-search" onclick="openSearch()" aria-label="Cerca"><i class="fas fa-magnifying-glass"></i></button>
       <button class="tb-btn" onclick="nav('settings')" aria-label="Impostazioni"><i class="fas fa-gear"></i></button>
     </div>
   </div>
 
-  <!-- SCROLL CONTENT -->
   <div class="scroll" id="scroll">
 
-    <!-- ======= HOME ======= -->
+    <!-- HOME -->
     <div id="sec-home" class="sec on">
-      <div id="install-banner" class="install-bar" onclick="installPWA()" style="display:none">
-        <div class="ib-icon"><i class="fas fa-download" style="color:var(--blue)"></i></div>
-        <div class="ib-text">
-          <div class="ib-title">Installa l'app</div>
-          <div class="ib-sub">Aggiungi alla schermata home per uso offline</div>
-        </div>
-        <div class="ib-close" onclick="event.stopPropagation();dismissInstall()"><i class="fas fa-xmark"></i></div>
-      </div>
-
       <div class="stat-grid">
-        <div class="stat-card">
-          <div class="stat-ic" style="background:linear-gradient(135deg,rgba(10,132,255,.35),rgba(10,132,255,.12))"><i class="fas fa-list-check" style="color:var(--blue)"></i></div>
-          <div class="stat-val" id="s-tasks">0</div>
-          <div class="stat-lbl">Attività da fare</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-ic" style="background:linear-gradient(135deg,rgba(255,159,10,.35),rgba(255,159,10,.12))"><i class="fas fa-file-lines" style="color:var(--orange)"></i></div>
-          <div class="stat-val" id="s-docs">0</div>
-          <div class="stat-lbl">Documenti</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-ic" style="background:linear-gradient(135deg,rgba(191,90,242,.35),rgba(191,90,242,.12))"><i class="fas fa-car-side" style="color:var(--purple)"></i></div>
-          <div class="stat-val" id="s-veh">0</div>
-          <div class="stat-lbl">Veicoli nel garage</div>
-        </div>
+        <div class="stat-card"><div class="stat-ic" style="background:color-mix(in srgb,var(--blue) 16%,transparent)"><i class="fas fa-list-check" style="color:var(--blue)"></i></div><div class="stat-val" id="s-tasks">0</div><div class="stat-lbl">Attività</div></div>
+        <div class="stat-card"><div class="stat-ic" style="background:color-mix(in srgb,var(--orange) 16%,transparent)"><i class="fas fa-file-lines" style="color:var(--orange)"></i></div><div class="stat-val" id="s-docs">0</div><div class="stat-lbl">Documenti</div></div>
+        <div class="stat-card"><div class="stat-ic" style="background:color-mix(in srgb,var(--purple) 16%,transparent)"><i class="fas fa-car-side" style="color:var(--purple)"></i></div><div class="stat-val" id="s-veh">0</div><div class="stat-lbl">Veicoli</div></div>
       </div>
 
-      <div class="grp-hdr first"><span><i class="fas fa-triangle-exclamation" style="color:var(--orange);margin-right:6px"></i>Scadenze imminenti</span></div>
+      <div class="grp-hdr first"><span><i class="fas fa-triangle-exclamation" style="color:var(--orange)"></i>Scadenze imminenti</span></div>
       <div class="ios-list" id="home-deadlines"></div>
 
-      <div class="grp-hdr">
-        <span><i class="fas fa-bolt" style="color:var(--yellow);margin-right:6px"></i>Attività urgenti</span>
-        <span class="grp-link" onclick="nav('tasks')">Tutte <i class="fas fa-chevron-right" style="font-size:10px"></i></span>
-      </div>
+      <div class="grp-hdr"><span><i class="fas fa-bolt" style="color:var(--yellow)"></i>Attività urgenti</span><span class="grp-link" onclick="nav('tasks')">Tutte <i class="fas fa-chevron-right" style="font-size:10px"></i></span></div>
       <div class="ios-list" id="home-tasks"></div>
+
+      <div class="grp-hdr"><span><i class="fas fa-wallet" style="color:var(--green)"></i>Ultime transazioni</span><span class="grp-link" onclick="nav('finance')">Tutte <i class="fas fa-chevron-right" style="font-size:10px"></i></span></div>
+      <div class="ios-list" id="home-txns"></div>
 
       <div style="height:8px"></div>
     </div>
 
-    <!-- ======= DOCUMENTS ======= -->
+    <!-- DOCUMENTS -->
     <div id="sec-documents" class="sec">
       <div class="pills">
         <button class="pill on" onclick="fDocs('all',this)">Tutti</button>
@@ -395,10 +243,10 @@ body{
         <button class="pill" onclick="fDocs('Lavoro',this)"><i class="fas fa-briefcase"></i> Lavoro</button>
         <button class="pill" onclick="fDocs('Contratti',this)"><i class="fas fa-file-contract"></i> Contratti</button>
       </div>
-      <div class="ios-list" id="docs-list" style="margin:0 16px 16px"></div>
+      <div class="ios-list" id="docs-list" style="margin:0 18px 16px"></div>
     </div>
 
-    <!-- ======= TASKS ======= -->
+    <!-- TASKS -->
     <div id="sec-tasks" class="sec">
       <div class="pills">
         <button class="pill on" onclick="fTasks('active',this)">Da fare</button>
@@ -407,40 +255,60 @@ body{
         <button class="pill" onclick="fTasks('Bassa',this)"><i class="fas fa-circle" style="color:var(--green)"></i> Bassa</button>
         <button class="pill" onclick="fTasks('done',this)"><i class="fas fa-check"></i> Completate</button>
       </div>
-      <div class="ios-list" id="tasks-list" style="margin:0 16px 16px"></div>
+      <div class="ios-list" id="tasks-list" style="margin:0 18px 16px"></div>
     </div>
 
-    <!-- ======= VEHICLES ======= -->
+    <!-- FINANCE -->
+    <div id="sec-finance" class="sec">
+      <div class="fin-hero">
+        <div class="fin-hero-top">
+          <div><div class="fin-hero-lbl">Budget mensile</div><div class="fin-hero-val" id="fin-budget">€0</div></div>
+          <button class="tb-btn" onclick="openEditBudget()" aria-label="Modifica budget"><i class="fas fa-pen"></i></button>
+        </div>
+        <div class="fin-bar"><div class="fin-bar-fill" id="fin-bar"></div></div>
+        <div class="fin-hero-foot"><span id="fin-spent-lbl">Speso €0</span><span id="fin-left-lbl">Rimangono €0</span></div>
+      </div>
+      <div class="fin-split">
+        <div class="fin-mini"><div class="fin-mini-lbl"><i class="fas fa-arrow-down" style="color:var(--red)"></i> Uscite del mese</div><div class="fin-mini-val" style="color:var(--red)" id="fin-out">€0</div></div>
+        <div class="fin-mini"><div class="fin-mini-lbl"><i class="fas fa-arrow-up" style="color:var(--green)"></i> Entrate del mese</div><div class="fin-mini-val" style="color:var(--green)" id="fin-in">€0</div></div>
+      </div>
+      <div class="pills">
+        <button class="pill on" onclick="fFin('all',this)">Tutte</button>
+        <button class="pill" onclick="fFin('expense',this)"><i class="fas fa-arrow-down"></i> Uscite</button>
+        <button class="pill" onclick="fFin('income',this)"><i class="fas fa-arrow-up"></i> Entrate</button>
+      </div>
+      <div class="grp-hdr" style="padding-top:2px"><span>Cronologia</span></div>
+      <div class="ios-list" id="fin-list" style="margin:0 18px 16px"></div>
+    </div>
+
+    <!-- VEHICLES -->
     <div id="sec-vehicles" class="sec">
       <div id="veh-list"></div>
-      
-      
+      <div style="height:8px"></div>
     </div>
 
-    <!-- ======= TRANSFER ======= -->
-  
-
-    <!-- ======= SETTINGS ======= -->
+    <!-- SETTINGS -->
     <div id="sec-settings" class="sec">
-      
-
       <div class="set-section">
-        <div class="set-title">Backup e dati</div>
+        <div class="set-title">Profilo</div>
         <div class="set-list">
-          <div class="set-row" onclick="exportBackup()">
-            <div class="set-ic" style="background:var(--green)"><i class="fas fa-arrow-down-to-bracket"></i></div>
-            <div class="set-info"><div class="set-label">Esporta backup</div><div class="set-sub">Scarica PersonalHub_Backup.json</div></div>
+          <div class="set-row" onclick="openEditName()">
+            <div class="set-ic" style="background:var(--blue)"><i class="fas fa-user"></i></div>
+            <div class="set-info"><div class="set-label">Nome</div><div class="set-sub" id="disp-name">Utente</div></div>
             <i class="fas fa-chevron-right" style="color:var(--text4);font-size:12px"></i>
           </div>
-          <div class="set-row" onclick="document.getElementById('imp-inp').click()">
-            <div class="set-ic" style="background:var(--orange)"><i class="fas fa-arrow-up-from-bracket"></i></div>
-            <div class="set-info"><div class="set-label">Importa backup</div><div class="set-sub">Ripristina da file JSON</div></div>
-            <i class="fas fa-chevron-right" style="color:var(--text4);font-size:12px"></i>
-          </div>
-          <input type="file" id="imp-inp" style="display:none" accept=".json" onchange="importBackup(this)">
         </div>
       </div>
-
+      <div class="set-section">
+        <div class="set-title">Aspetto</div>
+        <div class="set-list">
+          <div class="theme-seg">
+            <div class="theme-opt" id="th-auto" onclick="setTheme('auto')"><i class="fas fa-circle-half-stroke"></i>Automatico</div>
+            <div class="theme-opt" id="th-light" onclick="setTheme('light')"><i class="fas fa-sun"></i>Chiaro</div>
+            <div class="theme-opt" id="th-dark" onclick="setTheme('dark')"><i class="fas fa-moon"></i>Scuro</div>
+          </div>
+        </div>
+      </div>
       <div class="set-section">
         <div class="set-title">Formatta Dati</div>
         <div class="set-list">
@@ -451,27 +319,22 @@ body{
           </div>
         </div>
       </div>
-
-      
       <div style="height:8px"></div>
     </div>
 
-  </div><!-- /scroll -->
+  </div>
 
-  <!-- FAB -->
   <button class="fab" id="fab" onclick="openAdd()" aria-label="Aggiungi elemento"><i class="fas fa-plus"></i></button>
 
-  <!-- BOTTOM NAV -->
   <nav class="bnav">
     <button class="nav-it on" id="n-home" onclick="nav('home')"><i class="fas fa-house"></i><span>Home</span></button>
-    <button class="nav-it" id="n-documents" onclick="nav('documents')"><i class="fas fa-folder-open"></i><span>Documenti</span></button>
+    <button class="nav-it" id="n-documents" onclick="nav('documents')"><i class="fas fa-folder-open"></i><span>Doc</span></button>
     <button class="nav-it" id="n-tasks" onclick="nav('tasks')"><i class="fas fa-list-check"></i><span>Attività</span></button>
+    <button class="nav-it" id="n-finance" onclick="nav('finance')"><i class="fas fa-wallet"></i><span>Finanze</span></button>
     <button class="nav-it" id="n-vehicles" onclick="nav('vehicles')"><i class="fas fa-car-side"></i><span>Garage</span></button>
   </nav>
+</div>
 
-</div><!-- /phone -->
-
-<!-- MODAL -->
 <div class="modal-wrap" id="modal" onclick="closeModal(event)">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
@@ -479,750 +342,376 @@ body{
     <div class="modal-body" id="m-body"></div>
   </div>
 </div>
-
-<!-- NOTIFICATION -->
 <div class="notif" id="notif"></div>
 
-<!-- ==================== JAVASCRIPT ==================== -->
 <script>
-/* ==============================
-   DATA — default demo dataset
-   ============================== */
 const DEFAULT = {
   name: 'Utente',
   tasks: [
-    {id:1,title:'Prenotare tagliando Fiat Panda',desc:'Cambio olio + filtri aria',priority:'Alta',due:'2026-07-01',cat:'Veicoli',done:false},
-    {id:2,title:'Rinnovare assicurazione moto',desc:'Confrontare preventivi online',priority:'Alta',due:'2026-07-05',cat:'Veicoli',done:false},
-    {id:3,title:'Comprare pneumatici invernali',desc:'Misura 205/55 R16',priority:'Media',due:'2026-08-15',cat:'Auto',done:false},
-    {id:4,title:'Riordinare armadio stagionale',desc:'Cambio abiti estate/inverno',priority:'Bassa',due:'2026-07-20',cat:'Casa',done:false},
-    {id:5,title:'Pagare bolletta luce',desc:'',priority:'Alta',due:'2026-06-30',cat:'Casa',done:true},
-    {id:6,title:'Portare moto dal meccanico',desc:'Freno posteriore da controllare',priority:'Media',due:'2026-07-10',cat:'Moto',done:false},
+    {id:1,title:'Prenotare tagliando Fiat Panda',desc:'Cambio olio + filtri aria',priority:'Alta',due:'2026-10-01',cat:'Veicoli',done:false},
+    {id:2,title:'Rinnovare assicurazione moto',desc:'Confrontare preventivi online',priority:'Alta',due:'2026-10-05',cat:'Veicoli',done:false},
+    {id:3,title:'Comprare pneumatici invernali',desc:'Misura 205/55 R16',priority:'Media',due:'2026-11-15',cat:'Auto',done:false},
+    {id:4,title:'Riordinare armadio stagionale',desc:'',priority:'Bassa',due:'2026-10-20',cat:'Casa',done:false},
+    {id:5,title:'Pagare bolletta luce',desc:'',priority:'Alta',due:'2026-09-30',cat:'Casa',done:true},
   ],
   docs: [
-    {id:1,ic:'fa-id-card',title:"Carta d'Identità",cat:'Identità',date:'2021-10-15',exp:'2031-10-14',note:'Valida per espatrio UE',icCol:'#0a84ff'},
-    {id:2,ic:'fa-passport',title:'Passaporto',cat:'Identità',date:'2020-03-20',exp:'2030-03-19',note:'',icCol:'#0a84ff'},
-    {id:3,ic:'fa-car',title:'Patente di guida B',cat:'Identità',date:'2018-06-10',exp:'2028-06-09',note:'Rinnovo con visita medica',icCol:'#30d158'},
-    {id:4,ic:'fa-file-lines',title:'Libretto Fiat Panda',cat:'Veicoli',date:'2022-04-15',exp:null,note:'Telaio: ZFA31200...',icCol:'#bf5af2'},
-    {id:5,ic:'fa-shield-halved',title:'Polizza Assicurazione Auto',cat:'Veicoli',date:'2025-07-01',exp:'2026-07-06',note:'AXA — Kasko totale',icCol:'#ff453a'},
-    {id:6,ic:'fa-house',title:'Contratto di Affitto',cat:'Casa',date:'2023-09-01',exp:'2025-09-01',note:'Rinnovabile annualmente',icCol:'#ff9f0a'},
-    {id:7,ic:'fa-briefcase',title:'Contratto di Lavoro',cat:'Lavoro',date:'2022-01-15',exp:null,note:'Tempo indeterminato',icCol:'#5ac8fa'},
-    {id:8,ic:'fa-tv',title:'Garanzia TV Samsung',cat:'Contratti',date:'2024-12-20',exp:'2026-12-19',note:'2 anni di garanzia',icCol:'#5e5ce6'},
+    {id:1,ic:'fa-id-card',title:"Carta d'Identità",cat:'Identità',date:'2021-10-15',exp:'2031-10-14',note:'Valida per espatrio UE',icCol:'#007aff'},
+    {id:2,ic:'fa-passport',title:'Passaporto',cat:'Identità',date:'2020-03-20',exp:'2030-03-19',note:'',icCol:'#007aff'},
+    {id:3,ic:'fa-car',title:'Patente di guida B',cat:'Identità',date:'2018-06-10',exp:'2028-06-09',note:'',icCol:'#34c759'},
+    {id:4,ic:'fa-shield-halved',title:'Polizza Assicurazione Auto',cat:'Veicoli',date:'2025-07-01',exp:'2026-11-06',note:'AXA — Kasko totale',icCol:'#ff3b30'},
+    {id:5,ic:'fa-house',title:'Contratto di Affitto',cat:'Casa',date:'2023-09-01',exp:'2026-09-01',note:'',icCol:'#ff9500'},
   ],
   vehicles: [
     {id:1,emoji:'🚗',ic:'fa-car-side',name:'Fiat Panda',model:'1.2 Lounge',year:2018,plate:'AB 123 CD',km:67430,fuel:'Benzina',
-     maint:[
-       {date:'2025-11-15',km:65000,type:'Tagliando',note:'Olio + filtri'},
-       {date:'2024-08-20',km:58000,type:'Pneumatici',note:'4 gomme Michelin'}
-     ],
-     dl:[
-       {name:'Assicurazione',date:'2026-07-06'},
-       {name:'Bollo',date:'2026-09-30'},
-       {name:'Revisione',date:'2027-04-15'}
-     ]},
+     maint:[{date:'2025-11-15',km:65000,type:'Tagliando',note:'Olio + filtri'}],
+     dl:[{name:'Assicurazione',date:'2026-11-06'},{name:'Bollo',date:'2026-12-30'},{name:'Revisione',date:'2027-04-15'}]},
     {id:2,emoji:'🏍️',ic:'fa-motorcycle',name:'Honda CBR 600',model:'CBR 600RR',year:2015,plate:'EF 456 GH',km:32100,fuel:'Benzina',
-     maint:[
-       {date:'2025-04-10',km:31000,type:'Tagliando',note:'Candele + filtro aria'}
-     ],
-     dl:[
-       {name:'Assicurazione',date:'2026-10-15'},
-       {name:'Revisione',date:'2026-07-22'}
-     ]},
+     maint:[{date:'2025-04-10',km:31000,type:'Tagliando',note:'Candele + filtro aria'}],
+     dl:[{name:'Assicurazione',date:'2026-10-15'},{name:'Revisione',date:'2026-12-22'}]},
   ],
-  inventory: [
-    {id:1,ic:'fa-camera',name:'Sony A7 III',cat:'Fotocamera',price:2199,year:2022,warranty:'2024-12-20',col:'#ff9f0a'},
-    {id:2,ic:'fa-laptop',name:'MacBook Pro 14"',cat:'Computer',price:2199,year:2023,warranty:'2026-01-10',col:'#888'},
-    {id:3,ic:'fa-headphones',name:'Sony WH-1000XM5',cat:'Audio',price:350,year:2023,warranty:'2025-06-05',col:'#0a84ff'},
-    {id:4,ic:'fa-mobile-screen',name:'iPhone 14 Pro',cat:'Smartphone',price:1299,year:2022,warranty:'2024-10-15',col:'#30d158'},
-  ]
+  finance: {
+    budget: 1200,
+    transactions: [
+      {id:1,type:'expense',title:'Spesa supermercato',cat:'Casa',amount:78.4,date:isoToday(-1)},
+      {id:2,type:'expense',title:'Benzina Fiat Panda',cat:'Veicoli',amount:45,date:isoToday(-2)},
+      {id:3,type:'income',title:'Stipendio',cat:'Lavoro',amount:1450,date:isoToday(-5)},
+      {id:4,type:'expense',title:'Bolletta luce',cat:'Casa',amount:63.9,date:isoToday(-6)},
+      {id:5,type:'expense',title:'Abbonamento palestra',cat:'Salute',amount:35,date:isoToday(-9)},
+    ]
+  }
 };
+function isoToday(off){const d=new Date();d.setDate(d.getDate()+off);return d.toISOString().split('T')[0]}
 
-/* ==============================
-   STATE
-   ============================== */
 let D = JSON.parse(JSON.stringify(DEFAULT));
-let curSec = 'home', curDocs = 'all', curTasks = 'active';
-let deferredInstall = null;
+let curSec='home', curDocs='all', curTasks='active', curFin='all';
 
-/* ==============================
-   PERSISTENCE
-   ============================== */
-function save() {
-  try { localStorage.setItem('ph_v2', JSON.stringify(D)); } catch(e) {}
-}
-function load() {
-  try {
-    const s = localStorage.getItem('ph_v2');
-    if (s) D = JSON.parse(s);
-  } catch(e) {}
-}
+function save(){try{localStorage.setItem('lifeos_v4',JSON.stringify(D))}catch(e){}}
+function load(){try{const s=localStorage.getItem('lifeos_v4');if(s)D=Object.assign(JSON.parse(JSON.stringify(DEFAULT)),JSON.parse(s))}catch(e){}}
 
-/* ==============================
-   UTILS
-   ============================== */
-function fmtDate(d) {
-  if (!d) return '—';
-  const dt = new Date(d + 'T00:00:00');
-  return dt.toLocaleDateString('it-IT', {day:'numeric', month:'short', year:'numeric'});
+function fmtDate(d){if(!d)return '—';return new Date(d+'T00:00:00').toLocaleDateString('it-IT',{day:'numeric',month:'short',year:'numeric'})}
+function daysLeft(d){return Math.max(0,Math.ceil((new Date(d)-new Date())/864e5))}
+function daysColor(d){const n=daysLeft(d);return n<30?'var(--red)':n<90?'var(--orange)':'var(--green)'}
+function prioColor(p){return {Alta:'var(--red)',Media:'var(--orange)',Bassa:'var(--green)'}[p]||'var(--text3)'}
+function eur(n){return '€'+Number(n).toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2})}
+function notif(msg){const el=document.getElementById('notif');el.textContent=msg;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),2600)}
+
+/* THEME */
+function setTheme(t){
+  try{localStorage.setItem('lifeos_theme',t)}catch(e){}
+  document.documentElement.dataset.theme = t==='auto' ? '' : t;
+  document.querySelectorAll('.theme-opt').forEach(el=>el.classList.remove('on'));
+  document.getElementById('th-'+t)?.classList.add('on');
 }
-function daysLeft(d) {
-  return Math.max(0, Math.ceil((new Date(d) - new Date()) / 864e5));
-}
-function daysColor(d) {
-  const n = daysLeft(d);
-  return n < 30 ? 'var(--red)' : n < 90 ? 'var(--orange)' : 'var(--green)';
-}
-function prioColor(p) {
-  return {Alta:'var(--red)', Media:'var(--orange)', Bassa:'var(--green)'}[p] || 'var(--text3)';
-}
-function updateClock() {
-  const n = new Date();
-  document.getElementById('clock').textContent = n.getHours() + ':' + String(n.getMinutes()).padStart(2,'0');
+function loadTheme(){
+  let t='auto';
+  try{t=localStorage.getItem('lifeos_theme')||'auto'}catch(e){}
+  setTheme(t);
 }
 
-/* ==============================
-   NOTIFICATION
-   ============================== */
-function notif(msg) {
-  const el = document.getElementById('notif');
-  el.textContent = msg;
-  el.classList.add('on');
-  setTimeout(() => el.classList.remove('on'), 2600);
-}
-
-/* ==============================
-   NAVIGATION
-   ============================== */
 const NAV_META = {
-  home:      {t:'Personal Hub',  s:'Il tuo spazio personale'},
-  documents: {t:'Documenti',    s:'Archivio digitale'},
-  tasks:     {t:'Attività',     s:'Cose da fare'},
-  vehicles:  {t:'Garage',       s:'I tuoi veicoli'},
-  transfer:  {t:'Transfer',     s:'Condivisione Wi-Fi locale'},
-  settings:  {t:'Impostazioni', s:'Preferenze e privacy'},
+  home:{t:'LifeOS',s:'Il tuo spazio personale'},
+  documents:{t:'Documenti',s:'Archivio digitale'},
+  tasks:{t:'Attività',s:'Cose da fare'},
+  finance:{t:'Finanze',s:'Spese, entrate e budget'},
+  vehicles:{t:'Garage',s:'I tuoi veicoli'},
+  settings:{t:'Impostazioni',s:'Preferenze e privacy'},
 };
 
-function nav(s) {
-  document.querySelectorAll('.sec').forEach(el => el.classList.remove('on'));
-  document.querySelectorAll('.nav-it').forEach(el => el.classList.remove('on'));
-  const sec = document.getElementById('sec-' + s);
-  if (sec) sec.classList.add('on');
-  const ni = document.getElementById('n-' + s);
-  if (ni) ni.classList.add('on');
-  const m = NAV_META[s] || NAV_META.home;
-  document.getElementById('tb-title').textContent = m.t;
-  document.getElementById('tb-sub').textContent = m.s;
-  document.getElementById('fab').style.display = ['settings','transfer'].includes(s) ? 'none' : 'flex';
-  curSec = s;
-  document.getElementById('scroll').scrollTop = 0;
+function nav(s){
+  document.querySelectorAll('.sec').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('.nav-it').forEach(el=>el.classList.remove('on'));
+  document.getElementById('sec-'+s)?.classList.add('on');
+  document.getElementById('n-'+s)?.classList.add('on');
+  const m=NAV_META[s]||NAV_META.home;
+  document.getElementById('tb-title').textContent=m.t;
+  document.getElementById('tb-sub').textContent=m.s;
+  document.getElementById('fab').style.display=['settings'].includes(s)?'none':'flex';
+  document.getElementById('tb-search').style.display=(s==='home')?'flex':'none';
+  curSec=s;
+  document.getElementById('scroll').scrollTop=0;
   document.getElementById('topbar').classList.remove('scrolled');
   renderSec(s);
 }
-
-function renderSec(s) {
-  if      (s === 'home')      renderHome();
-  else if (s === 'documents') renderDocs(curDocs);
-  else if (s === 'tasks')     renderTasks(curTasks);
-  else if (s === 'vehicles')  renderVehicles();
+function renderSec(s){
+  if(s==='home')renderHome();
+  else if(s==='documents')renderDocs(curDocs);
+  else if(s==='tasks')renderTasks(curTasks);
+  else if(s==='finance')renderFinance(curFin);
+  else if(s==='vehicles')renderVehicles();
 }
 
-/* ==============================
-   HOME
-   ============================== */
-function renderHome() {
-  document.getElementById('s-tasks').textContent  = D.tasks.filter(t => !t.done).length;
-  document.getElementById('s-docs').textContent   = D.docs.length;
-  document.getElementById('s-veh').textContent    = D.vehicles.length;
-  document.getElementById('disp-name').textContent = D.name || 'Utente';
+/* HOME */
+function renderHome(){
+  document.getElementById('s-tasks').textContent=D.tasks.filter(t=>!t.done).length;
+  document.getElementById('s-docs').textContent=D.docs.length;
+  document.getElementById('s-veh').textContent=D.vehicles.length;
+  document.getElementById('disp-name').textContent=D.name||'Utente';
 
-  // Deadlines aggregation
-  const deadlines = [];
-  D.vehicles.forEach(v => v.dl.forEach(dl => deadlines.push({name: dl.name + ' — ' + v.name, date: dl.date})));
-  D.docs.filter(d => d.exp).forEach(d => deadlines.push({name: d.title, date: d.exp}));
-  deadlines.sort((a,b) => daysLeft(a.date) - daysLeft(b.date));
+  const deadlines=[];
+  D.vehicles.forEach(v=>v.dl.forEach(dl=>deadlines.push({name:dl.name+' — '+v.name,date:dl.date})));
+  D.docs.filter(d=>d.exp).forEach(d=>deadlines.push({name:d.title,date:d.exp}));
+  deadlines.sort((a,b)=>daysLeft(a.date)-daysLeft(b.date));
+  document.getElementById('home-deadlines').innerHTML = deadlines.slice(0,3).map(dl=>`
+    <div class="dl-row"><div class="dl-days"><div class="dl-num" style="color:${daysColor(dl.date)}">${daysLeft(dl.date)}</div><div class="dl-lbl">giorni</div></div>
+    <div class="dl-info"><div class="dl-name">${dl.name}</div><div class="dl-date">Scade ${fmtDate(dl.date)}</div></div></div>`).join('') || emptyHTML('fa-calendar-check','Nessuna scadenza imminente');
 
-  const hd = document.getElementById('home-deadlines');
-  hd.innerHTML = deadlines.slice(0,4).map(dl => `
-    <div class="dl-row">
-      <div class="dl-days">
-        <div class="dl-num" style="color:${daysColor(dl.date)}">${daysLeft(dl.date)}</div>
-        <div class="dl-lbl">giorni</div>
-      </div>
-      <div class="dl-info">
-        <div class="dl-name">${dl.name}</div>
-        <div class="dl-date">Scade ${fmtDate(dl.date)}</div>
-      </div>
-    </div>`).join('') || emptyHTML('fa-calendar-check', 'Nessuna scadenza imminente');
+  const urg = D.tasks.filter(t=>!t.done).sort((a,b)=>{const w={Alta:0,Media:1,Bassa:2};return (w[a.priority]-w[b.priority])||(new Date(a.due)-new Date(b.due))}).slice(0,3);
+  const ht=document.getElementById('home-tasks');
+  ht.innerHTML = urg.length? urg.map(t=>taskRow(t)).join('') : emptyHTML('fa-party-horn','Nessuna attività urgente!');
+  attachTaskChecks(ht, ()=>renderHome());
 
-  // Urgent tasks
-  const urg = D.tasks.filter(t => !t.done && t.priority === 'Alta').slice(0,3);
-  const ht = document.getElementById('home-tasks');
-  ht.innerHTML = urg.length ? urg.map(t => taskRow(t)).join('') : emptyHTML('fa-party-horn', 'Nessuna attività urgente!');
-  attachTaskChecks(ht, () => renderHome());
+  const txns=[...D.finance.transactions].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,3);
+  document.getElementById('home-txns').innerHTML = txns.length? txns.map(txnRow).join('') : emptyHTML('fa-wallet','Nessuna transazione');
 }
 
-/* ==============================
-   TASKS
-   ============================== */
-function taskRow(t) {
-  const pc = prioColor(t.priority);
+/* TASKS */
+function taskRow(t){
+  const pc=prioColor(t.priority);
   return `<div class="ios-row" onclick="showTaskDetail(${t.id})">
-    <div class="chk ${t.done ? 'done' : ''}" data-id="${t.id}"><i class="fas fa-check"></i></div>
-    <div class="row-body">
-      <div class="row-title" style="${t.done ? 'opacity:.4;text-decoration:line-through' : ''}">${t.title}</div>
-      <div class="row-sub">${t.cat} · ${fmtDate(t.due)}</div>
-    </div>
-    <span class="badge" style="background:${pc}22;color:${pc}">${t.priority}</span>
-  </div>`;
+    <div class="chk ${t.done?'done':''}" data-id="${t.id}"><i class="fas fa-check"></i></div>
+    <div class="row-body"><div class="row-title" style="${t.done?'opacity:.4;text-decoration:line-through':''}">${t.title}</div><div class="row-sub">${t.cat} · ${fmtDate(t.due)}</div></div>
+    <span class="badge" style="background:color-mix(in srgb,${pc} 18%,transparent);color:${pc}">${t.priority}</span></div>`;
 }
-
-function attachTaskChecks(container, onToggle) {
-  container.querySelectorAll('.chk').forEach(el => {
-    el.onclick = e => {
-      e.stopPropagation();
-      const t = D.tasks.find(x => x.id === +el.dataset.id);
-      if (t) { t.done = !t.done; save(); onToggle(); }
-    };
-  });
+function attachTaskChecks(container,onToggle){
+  container.querySelectorAll('.chk').forEach(el=>{el.onclick=e=>{e.stopPropagation();const t=D.tasks.find(x=>x.id===+el.dataset.id);if(t){t.done=!t.done;save();onToggle()}}});
 }
-
-function renderTasks(f) {
-  curTasks = f;
+function renderTasks(f){
+  curTasks=f;
   let list;
-  if      (f === 'done')   list = D.tasks.filter(t => t.done);
-  else if (f === 'active') list = D.tasks.filter(t => !t.done);
-  else                     list = D.tasks.filter(t => !t.done && t.priority === f);
-  const el = document.getElementById('tasks-list');
-  el.innerHTML = list.length ? list.map(t => taskRow(t)).join('') : emptyHTML('fa-check-double', 'Nessuna attività qui');
-  attachTaskChecks(el, () => renderTasks(curTasks));
+  if(f==='done')list=D.tasks.filter(t=>t.done);
+  else if(f==='active')list=D.tasks.filter(t=>!t.done);
+  else list=D.tasks.filter(t=>!t.done&&t.priority===f);
+  const el=document.getElementById('tasks-list');
+  el.innerHTML=list.length?list.map(t=>taskRow(t)).join(''):emptyHTML('fa-check-double','Nessuna attività qui');
+  attachTaskChecks(el,()=>renderTasks(curTasks));
 }
-
-function fTasks(f, btn) {
-  document.querySelectorAll('#sec-tasks .pill').forEach(p => p.classList.remove('on'));
-  btn.classList.add('on');
-  renderTasks(f);
+function fTasks(f,btn){document.querySelectorAll('#sec-tasks .pill').forEach(p=>p.classList.remove('on'));btn.classList.add('on');renderTasks(f)}
+function showTaskDetail(id){
+  const t=D.tasks.find(x=>x.id===id);if(!t)return;
+  const pc=prioColor(t.priority);
+  openModal(t.title,`<div class="ios-list" style="margin-bottom:14px">
+    <div class="ios-row"><div class="row-ic" style="background:color-mix(in srgb,${pc} 16%,transparent)"><i class="fas fa-flag" style="color:${pc}"></i></div><div class="row-body"><div class="row-sub">Priorità</div><div class="row-title">${t.priority}</div></div></div>
+    <div class="ios-row"><div class="row-ic" style="background:color-mix(in srgb,var(--blue) 14%,transparent)"><i class="fas fa-calendar" style="color:var(--blue)"></i></div><div class="row-body"><div class="row-sub">Scadenza</div><div class="row-title">${fmtDate(t.due)}</div></div></div>
+    <div class="ios-row"><div class="row-ic" style="background:color-mix(in srgb,var(--green) 14%,transparent)"><i class="fas fa-tag" style="color:var(--green)"></i></div><div class="row-body"><div class="row-sub">Categoria</div><div class="row-title">${t.cat}</div></div></div>
+    ${t.desc?`<div class="ios-row"><div class="row-ic" style="background:color-mix(in srgb,var(--teal) 14%,transparent)"><i class="fas fa-note-sticky" style="color:var(--teal)"></i></div><div class="row-body"><div class="row-sub">Note</div><div class="row-title">${t.desc}</div></div></div>`:''}</div>
+    <div class="btn-row"><button class="ios-btn btn-red" onclick="deleteTask(${t.id})"><i class="fas fa-trash"></i> Elimina</button><button class="ios-btn btn-fill" onclick="closeModal()">Chiudi</button></div>`);
 }
+function deleteTask(id){D.tasks=D.tasks.filter(t=>t.id!==id);save();closeModal();renderTasks(curTasks)}
 
-function showTaskDetail(id) {
-  const t = D.tasks.find(x => x.id === id); if (!t) return;
-  const pc = prioColor(t.priority);
-  openModal(t.title, `
+/* DOCUMENTS */
+function renderDocs(f){
+  curDocs=f;
+  const list=(f&&f!=='all')?D.docs.filter(d=>d.cat===f):D.docs;
+  document.getElementById('docs-list').innerHTML=list.map(d=>`
+    <div class="ios-row" onclick="showDoc(${d.id})"><div class="row-ic" style="background:color-mix(in srgb,${d.icCol} 16%,transparent)"><i class="fas ${d.ic}" style="color:${d.icCol}"></i></div>
+    <div class="row-body"><div class="row-title">${d.title}</div><div class="row-sub">${d.cat}${d.exp?' · Scade '+fmtDate(d.exp):''}</div></div>
+    ${d.exp?`<span style="font-size:12px;font-weight:700;color:${daysColor(d.exp)}">${daysLeft(d.exp)}g</span>`:''}<i class="fas fa-chevron-right row-chev"></i></div>`).join('')||emptyHTML('fa-folder-open','Nessun documento');
+}
+function fDocs(f,btn){document.querySelectorAll('#sec-documents .pill').forEach(p=>p.classList.remove('on'));btn.classList.add('on');renderDocs(f)}
+function showDoc(id){
+  const d=D.docs.find(x=>x.id===id);if(!d)return;
+  openModal(d.title,`<div style="text-align:center;padding:18px 0 22px;background:color-mix(in srgb,${d.icCol} 10%,transparent);border-radius:14px;margin-bottom:16px"><i class="fas ${d.ic}" style="font-size:52px;color:${d.icCol}"></i></div>
     <div class="ios-list" style="margin-bottom:14px">
-      <div class="ios-row"><div class="row-ic" style="background:${pc}22"><i class="fas fa-flag" style="color:${pc}"></i></div><div class="row-body"><div class="row-sub">Priorità</div><div class="row-title">${t.priority}</div></div></div>
-      <div class="ios-row"><div class="row-ic" style="background:rgba(10,132,255,.15)"><i class="fas fa-calendar" style="color:var(--blue)"></i></div><div class="row-body"><div class="row-sub">Scadenza</div><div class="row-title">${fmtDate(t.due)}</div></div></div>
-      <div class="ios-row"><div class="row-ic" style="background:rgba(48,209,88,.15)"><i class="fas fa-tag" style="color:var(--green)"></i></div><div class="row-body"><div class="row-sub">Categoria</div><div class="row-title">${t.cat}</div></div></div>
-      ${t.desc ? `<div class="ios-row"><div class="row-ic" style="background:rgba(90,200,250,.15)"><i class="fas fa-note-sticky" style="color:var(--teal)"></i></div><div class="row-body"><div class="row-sub">Note</div><div class="row-title">${t.desc}</div></div></div>` : ''}
-    </div>
-    <div class="btn-row">
-      <button class="ios-btn btn-red" onclick="deleteTask(${t.id})"><i class="fas fa-trash"></i> Elimina</button>
-      <button class="ios-btn btn-fill" onclick="closeModal()">Chiudi</button>
-    </div>`);
+    <div class="ios-row"><div class="row-body"><div class="row-sub">Categoria</div><div class="row-title">${d.cat}</div></div></div>
+    <div class="ios-row"><div class="row-body"><div class="row-sub">Caricato il</div><div class="row-title">${fmtDate(d.date)}</div></div></div>
+    ${d.exp?`<div class="ios-row"><div class="row-body"><div class="row-sub">Scadenza</div><div class="row-title" style="color:${daysColor(d.exp)}">${fmtDate(d.exp)} · ${daysLeft(d.exp)} giorni</div></div></div>`:''}
+    ${d.note?`<div class="ios-row"><div class="row-body"><div class="row-sub">Note</div><div class="row-title">${d.note}</div></div></div>`:''}</div>
+    <div class="btn-row"><button class="ios-btn btn-red" onclick="deleteDoc(${d.id})"><i class="fas fa-trash"></i> Elimina</button><button class="ios-btn btn-fill" onclick="closeModal()">Chiudi</button></div>`);
 }
+function deleteDoc(id){D.docs=D.docs.filter(d=>d.id!==id);save();closeModal();renderDocs(curDocs)}
 
-function deleteTask(id) {
-  D.tasks = D.tasks.filter(t => t.id !== id);
-  save(); closeModal(); renderTasks(curTasks);
-}
-
-/* ==============================
-   DOCUMENTS
-   ============================== */
-function renderDocs(f) {
-  curDocs = f;
-  const list = (f && f !== 'all') ? D.docs.filter(d => d.cat === f) : D.docs;
-  document.getElementById('docs-list').innerHTML = list.map(d => `
-    <div class="ios-row" onclick="showDoc(${d.id})">
-      <div class="row-ic" style="background:${d.icCol}22"><i class="fas ${d.ic}" style="color:${d.icCol}"></i></div>
-      <div class="row-body">
-        <div class="row-title">${d.title}</div>
-        <div class="row-sub">${d.cat}${d.exp ? ' · Scade ' + fmtDate(d.exp) : ''}</div>
+/* VEHICLES */
+function renderVehicles(){
+  document.getElementById('veh-list').innerHTML = D.vehicles.map(v=>{
+    const nextDl=[...v.dl].sort((a,b)=>daysLeft(a.date)-daysLeft(b.date))[0];
+    const dc=daysColor(nextDl.date);
+    return `<div class="veh-card" onclick="showVeh(${v.id})">
+      <div class="veh-hero">
+        <div class="veh-top"><div><div class="veh-name">${v.name}</div><div class="veh-model">${v.model} · ${v.year}</div></div><div class="veh-plate">${v.plate}</div></div>
+        <div class="veh-emoji">${v.emoji}</div>
       </div>
-      ${d.exp ? `<span style="font-size:12px;font-weight:700;color:${daysColor(d.exp)}">${daysLeft(d.exp)}g</span>` : ''}
-      <i class="fas fa-chevron-right row-chev"></i>
-    </div>`).join('') || emptyHTML('fa-folder-open', 'Nessun documento');
-}
-
-function fDocs(f, btn) {
-  document.querySelectorAll('#sec-documents .pill').forEach(p => p.classList.remove('on'));
-  btn.classList.add('on');
-  renderDocs(f);
-}
-
-function showDoc(id) {
-  const d = D.docs.find(x => x.id === id); if (!d) return;
-  openModal(d.title, `
-    <div style="text-align:center;padding:18px 0 22px;background:${d.icCol}15;border-radius:12px;margin-bottom:16px">
-      <i class="fas ${d.ic}" style="font-size:52px;color:${d.icCol}"></i>
-    </div>
-    <div class="ios-list" style="margin-bottom:14px">
-      <div class="ios-row"><div class="row-body"><div class="row-sub">Categoria</div><div class="row-title">${d.cat}</div></div></div>
-      <div class="ios-row"><div class="row-body"><div class="row-sub">Caricato il</div><div class="row-title">${fmtDate(d.date)}</div></div></div>
-      ${d.exp ? `<div class="ios-row"><div class="row-body"><div class="row-sub">Scadenza</div><div class="row-title" style="color:${daysColor(d.exp)}">${fmtDate(d.exp)} · ${daysLeft(d.exp)} giorni rimasti</div></div></div>` : ''}
-      ${d.note ? `<div class="ios-row"><div class="row-body"><div class="row-sub">Note</div><div class="row-title">${d.note}</div></div></div>` : ''}
-    </div>
-    <div class="btn-row">
-      <button class="ios-btn btn-red" onclick="deleteDoc(${d.id})"><i class="fas fa-trash"></i> Elimina</button>
-      <button class="ios-btn btn-fill" onclick="closeModal()">Chiudi</button>
-    </div>`);
-}
-
-function deleteDoc(id) {
-  D.docs = D.docs.filter(d => d.id !== id);
-  save(); closeModal(); renderDocs(curDocs);
-}
-
-/* ==============================
-   VEHICLES
-   ============================== */
-function renderVehicles() {
-  document.getElementById('veh-list').innerHTML = D.vehicles.map(v => `
-    <div class="veh-card" onclick="showVeh(${v.id})">
-      <div class="veh-top">
-        <div><div class="veh-name">${v.name}</div><div class="veh-model">${v.model} · ${v.year}</div></div>
-        <div class="veh-plate">${v.plate}</div>
-      </div>
-      <div class="veh-emoji">${v.emoji}</div>
+      <div style="padding:0 20px 14px"><span class="veh-next" style="background:color-mix(in srgb,${dc} 16%,transparent);color:${dc}"><i class="fas fa-calendar-days"></i> ${nextDl.name} tra ${daysLeft(nextDl.date)}g</span></div>
       <div class="veh-stats">
         <div class="veh-stat"><div class="veh-sv">${v.km.toLocaleString('it-IT')}</div><div class="veh-sl">km totali</div></div>
-        <div class="veh-stat"><div class="veh-sv" style="color:${daysColor(v.dl[0].date)}">${daysLeft(v.dl[0].date)}g</div><div class="veh-sl">${v.dl[0].name}</div></div>
-      </div>
-    </div>`).join('') || emptyHTML('fa-car-side', 'Nessun veicolo aggiunto');
-  renderInventory();
+        <div class="veh-stat"><div class="veh-sv"><i class="fas fa-gas-pump" style="font-size:11px;margin-right:3px;color:var(--text3)"></i>${v.fuel}</div><div class="veh-sl">carburante</div></div>
+        <div class="veh-stat"><div class="veh-sv">${v.maint.length}</div><div class="veh-sl">manutenzioni</div></div>
+      </div></div>`;
+  }).join('') || emptyHTML('fa-car-side','Nessun veicolo aggiunto');
 }
-
-function showVeh(id) {
-  const v = D.vehicles.find(x => x.id === id); if (!v) return;
-  openModal(v.name, `
-    <div style="font-size:56px;text-align:center;padding:4px 0 16px">${v.emoji}</div>
+function showVeh(id){
+  const v=D.vehicles.find(x=>x.id===id);if(!v)return;
+  openModal(v.name,`<div style="font-size:56px;text-align:center;padding:4px 0 16px">${v.emoji}</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
-      ${[['Modello',v.model],['Anno',v.year],['Km',v.km.toLocaleString('it-IT')],['Carburante',v.fuel]].map(([l,val]) =>
-        `<div class="ios-list" style="margin:0"><div class="ios-row"><div class="row-body"><div class="row-sub">${l}</div><div class="row-title" style="font-size:15px">${val}</div></div></div></div>`
-      ).join('')}
-    </div>
-    <p style="font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.4px;padding:0 4px 8px;text-transform:uppercase">Scadenze</p>
+    ${[['Modello',v.model],['Anno',v.year],['Km',v.km.toLocaleString('it-IT')],['Carburante',v.fuel]].map(([l,val])=>`<div class="ios-list" style="margin:0"><div class="ios-row"><div class="row-body"><div class="row-sub">${l}</div><div class="row-title" style="font-size:15px">${val}</div></div></div></div>`).join('')}</div>
+    <p style="font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.4px;padding:0 4px 8px;text-transform:uppercase">Scadenze</p>
+    <div class="ios-list" style="margin-bottom:14px">${v.dl.map(dl=>`<div class="ios-row"><div class="row-ic" style="background:color-mix(in srgb,${daysColor(dl.date)} 16%,transparent)"><i class="fas fa-calendar-xmark" style="color:${daysColor(dl.date)}"></i></div><div class="row-body"><div class="row-sub">${dl.name}</div><div class="row-title">${fmtDate(dl.date)}</div></div><span style="font-weight:700;font-size:14px;color:${daysColor(dl.date)}">${daysLeft(dl.date)}g</span></div>`).join('')}</div>
+    <p style="font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.4px;padding:0 4px 8px;text-transform:uppercase">Manutenzioni</p>
+    <div class="ios-list" style="margin-bottom:14px">${v.maint.length?v.maint.map(m=>`<div class="ios-row"><div class="row-ic" style="background:color-mix(in srgb,var(--purple) 14%,transparent)"><i class="fas fa-wrench" style="color:var(--purple)"></i></div><div class="row-body"><div class="row-sub">${fmtDate(m.date)} · ${m.km.toLocaleString('it-IT')} km</div><div class="row-title">${m.type} — ${m.note}</div></div></div>`).join(''):'<div class="ios-row"><div class="row-body"><div class="row-title" style="color:var(--text3)">Nessuna manutenzione registrata</div></div></div>'}</div>
+    <div class="btn-row"><button class="ios-btn btn-red" onclick="deleteVeh(${v.id})"><i class="fas fa-trash"></i> Elimina</button><button class="ios-btn btn-fill" onclick="closeModal()">Chiudi</button></div>`);
+}
+function deleteVeh(id){D.vehicles=D.vehicles.filter(v=>v.id!==id);save();closeModal();renderVehicles()}
+
+/* FINANCE */
+function monthKey(d){return d.slice(0,7)}
+function txnRow(t){
+  const isExp=t.type==='expense', col=isExp?'var(--red)':'var(--green)';
+  return `<div class="ios-row" onclick="showTxn(${t.id})"><div class="row-ic" style="background:color-mix(in srgb,${col} 16%,transparent)"><i class="fas ${isExp?'fa-arrow-down':'fa-arrow-up'}" style="color:${col}"></i></div>
+    <div class="row-body"><div class="row-title">${t.title}</div><div class="row-sub">${t.cat} · ${fmtDate(t.date)}</div></div>
+    <span class="txn-amt" style="color:${col}">${isExp?'−':'+'}${eur(t.amount)}</span></div>`;
+}
+function renderFinance(f){
+  curFin=f;
+  const m=monthKey(isoToday(0));
+  const monthTx=D.finance.transactions.filter(t=>monthKey(t.date)===m);
+  const spent=monthTx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const income=monthTx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const budget=D.finance.budget||0;
+  const pct=budget>0?Math.min(100,Math.round(spent/budget*100)):0;
+  document.getElementById('fin-budget').textContent=eur(budget);
+  document.getElementById('fin-bar').style.width=pct+'%';
+  document.getElementById('fin-spent-lbl').textContent='Speso '+eur(spent);
+  document.getElementById('fin-left-lbl').textContent=(budget-spent>=0?'Rimangono ':'Sforato di ')+eur(Math.abs(budget-spent));
+  document.getElementById('fin-out').textContent=eur(spent);
+  document.getElementById('fin-in').textContent=eur(income);
+
+  let list=[...D.finance.transactions].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(f!=='all')list=list.filter(t=>t.type===f);
+  document.getElementById('fin-list').innerHTML=list.length?list.map(txnRow).join(''):emptyHTML('fa-wallet','Nessuna transazione');
+}
+function fFin(f,btn){document.querySelectorAll('#sec-finance .pill').forEach(p=>p.classList.remove('on'));btn.classList.add('on');renderFinance(f)}
+function showTxn(id){
+  const t=D.finance.transactions.find(x=>x.id===id);if(!t)return;
+  const isExp=t.type==='expense', col=isExp?'var(--red)':'var(--green)';
+  openModal(t.title,`<div style="text-align:center;padding:14px 0 20px"><div style="font-size:30px;font-weight:700;color:${col}">${isExp?'−':'+'}${eur(t.amount)}</div></div>
     <div class="ios-list" style="margin-bottom:14px">
-      ${v.dl.map(dl => `
-        <div class="ios-row">
-          <div class="row-ic" style="background:${daysColor(dl.date)}22"><i class="fas fa-calendar-xmark" style="color:${daysColor(dl.date)}"></i></div>
-          <div class="row-body"><div class="row-sub">${dl.name}</div><div class="row-title">${fmtDate(dl.date)}</div></div>
-          <span style="font-weight:700;font-size:14px;color:${daysColor(dl.date)}">${daysLeft(dl.date)}g</span>
-        </div>`).join('')}
-    </div>
-    <p style="font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.4px;padding:0 4px 8px;text-transform:uppercase">Manutenzioni</p>
-    <div class="ios-list" style="margin-bottom:14px">
-      ${v.maint.length ? v.maint.map(m => `
-        <div class="ios-row">
-          <div class="row-ic" style="background:rgba(191,90,242,.15)"><i class="fas fa-wrench" style="color:var(--purple)"></i></div>
-          <div class="row-body"><div class="row-sub">${fmtDate(m.date)} · ${m.km.toLocaleString('it-IT')} km</div><div class="row-title">${m.type} — ${m.note}</div></div>
-        </div>`).join('') : '<div class="ios-row"><div class="row-body"><div class="row-title" style="color:var(--text3)">Nessuna manutenzione registrata</div></div></div>'}
-    </div>
-    <button class="ios-btn btn-fill" style="width:100%" onclick="closeModal()">Chiudi</button>`);
+    <div class="ios-row"><div class="row-body"><div class="row-sub">Tipo</div><div class="row-title">${isExp?'Uscita':'Entrata'}</div></div></div>
+    <div class="ios-row"><div class="row-body"><div class="row-sub">Categoria</div><div class="row-title">${t.cat}</div></div></div>
+    <div class="ios-row"><div class="row-body"><div class="row-sub">Data</div><div class="row-title">${fmtDate(t.date)}</div></div></div></div>
+    <div class="btn-row"><button class="ios-btn btn-red" onclick="deleteTxn(${t.id})"><i class="fas fa-trash"></i> Elimina</button><button class="ios-btn btn-fill" onclick="closeModal()">Chiudi</button></div>`);
+}
+function deleteTxn(id){D.finance.transactions=D.finance.transactions.filter(t=>t.id!==id);save();closeModal();renderFinance(curFin)}
+function openEditBudget(){
+  openModal('Budget mensile',`<label class="flbl">Importo (€)</label><input class="finp" id="f-budget" type="number" value="${D.finance.budget}" min="0">
+    <div class="btn-row"><button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button><button class="ios-btn btn-blue" onclick="saveBudget()">Salva</button></div>`);
+}
+function saveBudget(){D.finance.budget=+document.getElementById('f-budget').value||0;save();closeModal();renderFinance(curFin);notif('✅ Budget aggiornato')}
+function openAddTxn(){
+  openModal('Nuova transazione',`
+    <div class="seg"><button class="on" id="seg-exp" onclick="setTxnType('expense')"><i class="fas fa-arrow-down"></i> Uscita</button><button id="seg-inc" onclick="setTxnType('income')"><i class="fas fa-arrow-up"></i> Entrata</button></div>
+    <input type="hidden" id="f-type" value="expense">
+    <label class="flbl">Descrizione *</label><input class="finp" id="f-t" type="text" placeholder="Es. Spesa supermercato">
+    <label class="flbl">Importo (€) *</label><input class="finp" id="f-a" type="number" min="0" step="0.01" placeholder="0.00">
+    <label class="flbl">Categoria</label><select class="fsel" id="f-c"><option>Casa</option><option>Veicoli</option><option>Lavoro</option><option>Salute</option><option>Tempo libero</option><option>Altro</option></select>
+    <div class="btn-row"><button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button><button class="ios-btn btn-blue" onclick="addTxn()"><i class="fas fa-plus"></i> Aggiungi</button></div>`);
+}
+function setTxnType(t){document.getElementById('f-type').value=t;document.getElementById('seg-exp').classList.toggle('on',t==='expense');document.getElementById('seg-inc').classList.toggle('on',t==='income')}
+function addTxn(){
+  const title=document.getElementById('f-t').value.trim();
+  const amount=+document.getElementById('f-a').value;
+  if(!title||!amount){notif('⚠️ Compila descrizione e importo');return}
+  D.finance.transactions.unshift({id:Date.now(),type:document.getElementById('f-type').value,title,amount,cat:document.getElementById('f-c').value,date:isoToday(0)});
+  save();closeModal();renderFinance(curFin);notif('💰 Transazione aggiunta');
 }
 
-/* ==============================
-   INVENTORY
-   ============================== */
-function renderInventory() {
-  const el = document.getElementById('inv-list'); if (!el) return;
-  el.innerHTML = D.inventory.map(i => `
-    <div class="ios-row" onclick="showInv(${i.id})">
-      <div class="row-ic" style="background:${i.col}22"><i class="fas ${i.ic}" style="color:${i.col};font-size:16px"></i></div>
-      <div class="row-body"><div class="row-title">${i.name}</div><div class="row-sub">${i.cat} · ${i.year}</div></div>
-      <span style="font-size:14px;font-weight:700;color:var(--blue)">€${i.price.toLocaleString('it-IT')}</span>
-      <i class="fas fa-chevron-right row-chev"></i>
-    </div>`).join('') || emptyHTML('fa-box', 'Nessun oggetto inventariato');
+/* ADD (context-aware FAB) */
+function openAdd(){
+  const s=curSec;
+  if(s==='documents')openAddDoc();
+  else if(s==='tasks')openAddTask();
+  else if(s==='finance')openAddTxn();
+  else if(s==='vehicles')openAddVehicle();
+  else openAddTask();
+}
+function openAddTask(){
+  openModal('Nuova attività',`<label class="flbl">Titolo *</label><input class="finp" id="f-t" type="text" placeholder="Cosa devi fare?">
+    <label class="flbl">Note</label><textarea class="finp" id="f-d" rows="2" style="resize:none"></textarea>
+    <label class="flbl">Priorità</label><select class="fsel" id="f-p"><option>Alta</option><option selected>Media</option><option>Bassa</option></select>
+    <label class="flbl">Scadenza</label><input class="finp" id="f-due" type="date">
+    <label class="flbl">Categoria</label><select class="fsel" id="f-c"><option>Casa</option><option>Lavoro</option><option>Veicoli</option><option>Salute</option><option>Personale</option></select>
+    <div class="btn-row"><button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button><button class="ios-btn btn-blue" onclick="addTask()"><i class="fas fa-plus"></i> Aggiungi</button></div>`);
+}
+function addTask(){
+  const t=document.getElementById('f-t').value.trim();
+  if(!t){notif('⚠️ Inserisci un titolo');return}
+  D.tasks.unshift({id:Date.now(),title:t,desc:document.getElementById('f-d').value,priority:document.getElementById('f-p').value,due:document.getElementById('f-due').value||isoToday(30),cat:document.getElementById('f-c').value,done:false});
+  save();closeModal();renderTasks(curTasks);notif('✅ Attività aggiunta');
+}
+const DOC_ICONS={Identità:['fa-id-card','#007aff'],Casa:['fa-house','#ff9500'],Veicoli:['fa-car','#34c759'],Lavoro:['fa-briefcase','#32ade6'],Contratti:['fa-file-contract','#5856d6']};
+function openAddDoc(){
+  openModal('Nuovo documento',`<label class="flbl">Titolo *</label><input class="finp" id="f-t" type="text" placeholder="Es. Carta d'Identità">
+    <label class="flbl">Categoria</label><select class="fsel" id="f-c"><option>Identità</option><option>Casa</option><option>Veicoli</option><option>Lavoro</option><option>Contratti</option></select>
+    <label class="flbl">Data scadenza</label><input class="finp" id="f-e" type="date">
+    <label class="flbl">Note</label><textarea class="finp" id="f-n" rows="2" style="resize:none"></textarea>
+    <div class="btn-row"><button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button><button class="ios-btn btn-blue" onclick="addDoc()"><i class="fas fa-plus"></i> Aggiungi</button></div>`);
+}
+function addDoc(){
+  const title=document.getElementById('f-t').value.trim();
+  if(!title){notif('⚠️ Inserisci un titolo');return}
+  const cat=document.getElementById('f-c').value, [ic,icCol]=DOC_ICONS[cat]||['fa-file','#888'];
+  D.docs.unshift({id:Date.now(),ic,icCol,title,cat,date:isoToday(0),exp:document.getElementById('f-e').value||null,note:document.getElementById('f-n').value});
+  save();closeModal();renderDocs(curDocs);notif('📄 Documento aggiunto');
+}
+function openAddVehicle(){
+  openModal('Nuovo veicolo',`<label class="flbl">Tipo</label><select class="fsel" id="f-tp"><option>Auto</option><option>Moto</option><option>Scooter</option></select>
+    <label class="flbl">Marca e modello *</label><input class="finp" id="f-n" type="text" placeholder="Es. Fiat Panda 1.2">
+    <label class="flbl">Anno</label><input class="finp" id="f-y" type="number" value="2020" min="1980" max="2030">
+    <label class="flbl">Targa</label><input class="finp" id="f-pl" type="text" placeholder="AB 000 CD" style="text-transform:uppercase;letter-spacing:2px">
+    <label class="flbl">Km attuali</label><input class="finp" id="f-km" type="number" value="0" min="0">
+    <div class="btn-row"><button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button><button class="ios-btn btn-blue" onclick="addVehicle()"><i class="fas fa-plus"></i> Aggiungi</button></div>`);
+}
+function addVehicle(){
+  const name=document.getElementById('f-n').value.trim();
+  if(!name){notif('⚠️ Inserisci il modello');return}
+  const types={Auto:['🚗','fa-car-side'],Moto:['🏍️','fa-motorcycle'],Scooter:['🛵','fa-motorcycle']};
+  const [emoji,ic]=types[document.getElementById('f-tp').value]||['🚗','fa-car-side'];
+  D.vehicles.push({id:Date.now(),emoji,ic,name,model:name,year:+document.getElementById('f-y').value,plate:document.getElementById('f-pl').value.toUpperCase(),km:+document.getElementById('f-km').value||0,fuel:'Benzina',maint:[],dl:[{name:'Assicurazione',date:isoToday(180)},{name:'Revisione',date:isoToday(365)}]});
+  save();closeModal();renderVehicles();notif('🚗 Veicolo aggiunto');
 }
 
-function showInv(id) {
-  const i = D.inventory.find(x => x.id === id); if (!i) return;
-  openModal(i.name, `
-    <div style="text-align:center;padding:18px 0 22px;background:${i.col}18;border-radius:12px;margin-bottom:16px">
-      <i class="fas ${i.ic}" style="font-size:52px;color:${i.col}"></i>
-    </div>
-    <div class="ios-list" style="margin-bottom:14px">
-      <div class="ios-row"><div class="row-body"><div class="row-sub">Categoria</div><div class="row-title">${i.cat}</div></div></div>
-      <div class="ios-row"><div class="row-body"><div class="row-sub">Prezzo acquisto</div><div class="row-title" style="color:var(--blue);font-weight:700;font-size:18px">€${i.price.toLocaleString('it-IT')}</div></div></div>
-      <div class="ios-row"><div class="row-body"><div class="row-sub">Anno acquisto</div><div class="row-title">${i.year}</div></div></div>
-      <div class="ios-row"><div class="row-body"><div class="row-sub">Garanzia fino al</div><div class="row-title" style="color:${daysColor(i.warranty)}">${fmtDate(i.warranty)}</div></div></div>
-    </div>
-    <div class="btn-row">
-      <button class="ios-btn btn-red" onclick="deleteInv(${i.id})"><i class="fas fa-trash"></i> Elimina</button>
-      <button class="ios-btn btn-fill" onclick="closeModal()">Chiudi</button>
-    </div>`);
+/* SETTINGS */
+function openEditName(){
+  openModal('Modifica nome',`<label class="flbl">Il tuo nome</label><input class="finp" id="f-name" type="text" value="${D.name||'Utente'}">
+    <div class="btn-row"><button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button><button class="ios-btn btn-blue" onclick="saveName()">Salva</button></div>`);
+}
+function saveName(){D.name=document.getElementById('f-name').value.trim()||'Utente';save();closeModal();document.getElementById('disp-name').textContent=D.name;notif('✅ Profilo aggiornato')}
+function confirmDeleteAll(){
+  openModal('Elimina tutti i dati',`<div style="text-align:center;padding:20px 0 24px">
+    <i class="fas fa-triangle-exclamation" style="font-size:48px;color:var(--red);display:block;margin-bottom:14px"></i>
+    <div style="font-size:17px;font-weight:700;margin-bottom:10px">Sei assolutamente sicuro?</div>
+    <div style="font-size:14px;color:var(--text3);line-height:1.6;max-width:280px;margin:0 auto">Verranno eliminati definitivamente attività, documenti, veicoli e transazioni.<br><br><strong style="color:var(--red)">Questa azione non può essere annullata.</strong></div></div>
+    <div class="btn-row"><button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button><button class="ios-btn btn-red" onclick="deleteAllData()"><i class="fas fa-trash-can"></i> Elimina tutto</button></div>`);
+}
+function deleteAllData(){
+  D.tasks=[];D.docs=[];D.vehicles=[];D.name='Utente';D.finance={budget:0,transactions:[]};
+  try{localStorage.removeItem('lifeos_v4')}catch(e){}
+  closeModal();nav('home');notif('🗑️ Tutti i dati eliminati');
 }
 
-function deleteInv(id) {
-  D.inventory = D.inventory.filter(x => x.id !== id);
-  save(); closeModal(); renderInventory();
+/* SEARCH — solo Home */
+function openSearch(){
+  openModal('Cerca',`<input class="finp" id="sq" type="search" placeholder="Cerca in tutto..." oninput="doSearch(this.value)" style="margin-bottom:8px"><div id="sr"></div>`);
+  setTimeout(()=>document.getElementById('sq')?.focus(),150);
+}
+function doSearch(q){
+  const el=document.getElementById('sr');if(!el)return;
+  if(!q){el.innerHTML='';return}
+  const ql=q.toLowerCase(),res=[];
+  D.tasks.filter(t=>t.title.toLowerCase().includes(ql)).forEach(t=>res.push({ic:'fa-list-check',col:'var(--blue)',text:t.title,sub:'Attività · '+t.priority}));
+  D.docs.filter(d=>d.title.toLowerCase().includes(ql)).forEach(d=>res.push({ic:d.ic,col:d.icCol,text:d.title,sub:'Documento · '+d.cat}));
+  D.vehicles.filter(v=>v.name.toLowerCase().includes(ql)).forEach(v=>res.push({ic:v.ic,col:'var(--purple)',text:v.name,sub:'Veicolo'}));
+  D.finance.transactions.filter(t=>t.title.toLowerCase().includes(ql)).forEach(t=>res.push({ic:t.type==='expense'?'fa-arrow-down':'fa-arrow-up',col:t.type==='expense'?'var(--red)':'var(--green)',text:t.title,sub:'Finanze · '+eur(t.amount)}));
+  el.innerHTML = res.length ? '<div class="ios-list" style="margin:0">'+res.map(r=>`<div class="ios-row"><div class="row-ic" style="background:color-mix(in srgb,${r.col} 16%,transparent)"><i class="fas ${r.ic}" style="color:${r.col}"></i></div><div class="row-body"><div class="row-title">${r.text}</div><div class="row-sub">${r.sub}</div></div></div>`).join('')+'</div>' : emptyHTML('fa-magnifying-glass','Nessun risultato per "'+q+'"');
 }
 
-/* ==============================
-   ADD MODALS
-   ============================== */
-function openAdd() {
-  const s = curSec;
-  if      (s === 'documents') openAddDoc();
-  else if (s === 'tasks')     openAddTask();
-  else if (s === 'vehicles')  openAddVehicle();
-  else                        openAddTask();
-}
+function openModal(title,body){document.getElementById('m-title').textContent=title;document.getElementById('m-body').innerHTML=body;document.getElementById('modal').classList.add('on')}
+function closeModal(e){if(!e||e.target===document.getElementById('modal'))document.getElementById('modal').classList.remove('on')}
+function emptyHTML(ic,msg){return `<div class="empty"><i class="fas ${ic}"></i><p>${msg}</p></div>`}
 
-function openAddTask() {
-  openModal('Nuova attività', `
-    <label class="flbl">Titolo *</label>
-    <input class="finp" id="f-t" type="text" placeholder="Cosa devi fare?">
-    <label class="flbl">Note</label>
-    <textarea class="finp" id="f-d" rows="2" style="resize:none" placeholder="Dettagli aggiuntivi..."></textarea>
-    <label class="flbl">Priorità</label>
-    <select class="fsel" id="f-p"><option>Alta</option><option selected>Media</option><option>Bassa</option></select>
-    <label class="flbl">Scadenza</label>
-    <input class="finp" id="f-due" type="date">
-    <label class="flbl">Categoria</label>
-    <select class="fsel" id="f-c"><option>Casa</option><option>Lavoro</option><option>Veicoli</option><option>Salute</option><option>Personale</option><option>Moto</option></select>
-    <div class="btn-row">
-      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
-      <button class="ios-btn btn-blue" onclick="addTask()"><i class="fas fa-plus"></i> Aggiungi</button>
-    </div>`);
-}
+document.getElementById('scroll').addEventListener('scroll',e=>{document.getElementById('topbar').classList.toggle('scrolled',e.target.scrollTop>8)},{passive:true});
 
-function addTask() {
-  const t = document.getElementById('f-t').value.trim();
-  if (!t) { notif('⚠️ Inserisci un titolo'); return; }
-  D.tasks.unshift({id:Date.now(), title:t, desc:document.getElementById('f-d').value,
-    priority:document.getElementById('f-p').value, due:document.getElementById('f-due').value||'2026-12-31',
-    cat:document.getElementById('f-c').value, done:false});
-  save(); closeModal(); renderTasks(curTasks);
-  notif('✅ Attività aggiunta');
-}
-
-const DOC_ICONS = {Identità:['fa-id-card','#0a84ff'],Casa:['fa-house','#ff9f0a'],Veicoli:['fa-car','#30d158'],Lavoro:['fa-briefcase','#5ac8fa'],Contratti:['fa-file-contract','#5e5ce6'],Garanzie:['fa-shield-halved','#ff453a'],Fatture:['fa-receipt','#bf5af2']};
-
-function openAddDoc() {
-  openModal('Nuovo documento', `
-    <label class="flbl">Titolo *</label>
-    <input class="finp" id="f-t" type="text" placeholder="Es. Carta d'Identità">
-    <label class="flbl">Categoria</label>
-    <select class="fsel" id="f-c"><option>Identità</option><option>Casa</option><option>Veicoli</option><option>Lavoro</option><option>Contratti</option><option>Garanzie</option><option>Fatture</option></select>
-    <label class="flbl">Data scadenza</label>
-    <input class="finp" id="f-e" type="date">
-    <label class="flbl">Note</label>
-    <textarea class="finp" id="f-n" rows="2" style="resize:none"></textarea>
-    <div class="btn-row">
-      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
-      <button class="ios-btn btn-blue" onclick="addDoc()"><i class="fas fa-plus"></i> Aggiungi</button>
-    </div>`);
-}
-
-function addDoc() {
-  const title = document.getElementById('f-t').value.trim();
-  if (!title) { notif('⚠️ Inserisci un titolo'); return; }
-  const cat = document.getElementById('f-c').value;
-  const [ic, icCol] = DOC_ICONS[cat] || ['fa-file','#888'];
-  D.docs.unshift({id:Date.now(), ic, icCol, title, cat,
-    date:new Date().toISOString().split('T')[0],
-    exp:document.getElementById('f-e').value||null,
-    note:document.getElementById('f-n').value
-  });
-  save(); closeModal(); renderDocs(curDocs);
-  notif('📄 Documento aggiunto');
-}
-
-function openAddVehicle() {
-  openModal('Nuovo veicolo', `
-    <label class="flbl">Tipo</label>
-    <select class="fsel" id="f-tp"><option>Auto</option><option>Moto</option><option>Veicolo Aziendale</option></select>
-    <label class="flbl">Marca e modello *</label>
-    <input class="finp" id="f-n" type="text" placeholder="Es. Fiat Panda 1.2">
-    <label class="flbl">Anno</label>
-    <input class="finp" id="f-y" type="number" value="2020" min="1980" max="2030">
-    <label class="flbl">Targa</label>
-    <input class="finp" id="f-pl" type="text" placeholder="AB 000 CD" style="text-transform:uppercase;letter-spacing:2px">
-    <label class="flbl">Km attuali</label>
-    <input class="finp" id="f-km" type="number" value="0" min="0">
-    <div class="btn-row">
-      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
-      <button class="ios-btn btn-blue" onclick="addVehicle()"><i class="fas fa-plus"></i> Aggiungi</button>
-    </div>`);
-}
-
-function addVehicle() {
-  const name = document.getElementById('f-n').value.trim();
-  if (!name) { notif('⚠️ Inserisci il modello'); return; }
-  const types = {Auto:['🚗','fa-car-side'],Moto:['🏍️','fa-motorcycle'],Scooter:['🛵','fa-motorcycle'],Camper:['🚐','fa-van-shuttle']};
-  const tp = document.getElementById('f-tp').value;
-  const [emoji, ic] = types[tp] || ['🚗','fa-car-side'];
-  D.vehicles.push({id:Date.now(), emoji, ic, name, model:name,
-    year:+document.getElementById('f-y').value,
-    plate:document.getElementById('f-pl').value.toUpperCase(),
-    km:+document.getElementById('f-km').value||0,
-    fuel:'Benzina', maint:[],
-    dl:[{name:'Assicurazione',date:'2027-07-01'},{name:'Revisione',date:'2028-01-01'}]
-  });
-  save(); closeModal(); renderVehicles();
-  notif('🚗 Veicolo aggiunto');
-}
-
-function openAddInv() {
-  openModal('Nuovo oggetto', `
-    <label class="flbl">Nome *</label>
-    <input class="finp" id="f-n" type="text" placeholder="Es. MacBook Pro">
-    <label class="flbl">Icona FA (es. fa-laptop)</label>
-    <input class="finp" id="f-ic" type="text" value="fa-box">
-    <label class="flbl">Colore</label>
-    <input class="finp" id="f-cl" type="color" value="#0a84ff" style="height:50px;padding:6px">
-    <label class="flbl">Categoria</label>
-    <select class="fsel" id="f-c"><option>Elettronica</option><option>Computer</option><option>Fotocamera</option><option>Audio</option><option>Smartphone</option><option>Elettrodomestici</option><option>Altro</option></select>
-    <label class="flbl">Prezzo acquisto (€)</label>
-    <input class="finp" id="f-p" type="number" value="0" min="0">
-    <label class="flbl">Anno acquisto</label>
-    <input class="finp" id="f-y" type="number" value="2024" min="1990" max="2030">
-    <label class="flbl">Garanzia fino al</label>
-    <input class="finp" id="f-w" type="date">
-    <div class="btn-row">
-      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
-      <button class="ios-btn btn-blue" onclick="addInv()"><i class="fas fa-plus"></i> Aggiungi</button>
-    </div>`);
-}
-
-function addInv() {
-  const name = document.getElementById('f-n').value.trim();
-  if (!name) { notif('⚠️ Inserisci il nome'); return; }
-  D.inventory.push({id:Date.now(),
-    ic:document.getElementById('f-ic').value||'fa-box',
-    col:document.getElementById('f-cl').value,
-    name, cat:document.getElementById('f-c').value,
-    price:+document.getElementById('f-p').value||0,
-    year:+document.getElementById('f-y').value||2024,
-    warranty:document.getElementById('f-w').value||'2027-12-31'
-  });
-  save(); closeModal(); renderInventory();
-  notif('📦 Oggetto aggiunto');
-}
-
-/* ==============================
-   TRANSFER
-   ============================== */
-function openReceive() {
-  openModal('Ricevi file', `
-    <div style="text-align:center;padding:12px 0 20px">
-      <div style="width:170px;height:170px;background:#fff;border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center">
-        <i class="fas fa-qrcode" style="font-size:100px;color:#000"></i>
-      </div>
-      <div style="font-size:15px;font-weight:600;margin-bottom:6px">In attesa di connessione...</div>
-      <div style="font-size:13px;color:var(--text3);margin-bottom:18px">Scansiona con l'altro dispositivo sulla stessa rete</div>
-      <div style="background:var(--bg3);border-radius:10px;padding:13px;font-family:monospace;font-size:15px;color:var(--blue);font-weight:700;letter-spacing:1px">192.168.1.10:8765</div>
-    </div>
-    <button class="ios-btn btn-fill" style="width:100%;margin-top:8px" onclick="closeModal()">Annulla</button>`);
-}
-
-function openSend() {
-  openModal('Invia file', `
-    <div style="text-align:center;padding:20px 0 24px">
-      <i class="fas fa-upload" style="font-size:44px;color:var(--blue);margin-bottom:14px;display:block"></i>
-      <div style="font-size:15px;font-weight:600;margin-bottom:6px">Seleziona file da inviare</div>
-      <div style="font-size:13px;color:var(--text3)">L'altro dispositivo deve essere in modalità Ricevi</div>
-    </div>
-    <div style="background:var(--bg3);border:1.5px dashed var(--sep);border-radius:12px;padding:28px;text-align:center;margin-bottom:16px;cursor:pointer"
-      onclick="this.innerHTML='<i class=fas fa-file-circle-check style=color:var(--green);font-size:28px;display:block;margin-bottom:8px></i><span style=color:var(--green);font-weight:600>documento.pdf selezionato</span>'">
-      <i class="fas fa-plus-circle" style="font-size:24px;color:var(--text3);margin-bottom:8px;display:block"></i>
-      <div style="font-size:14px;color:var(--text3)">Tocca per scegliere i file</div>
-    </div>
-    <div class="btn-row">
-      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
-      <button class="ios-btn btn-blue" onclick="closeModal();notif('📡 Trasferimento avviato!')">
-        <i class="fas fa-paper-plane"></i> Invia
-      </button>
-    </div>`);
-}
-
-/* ==============================
-   SETTINGS
-   ============================== */
-function openEditName() {
-  openModal('Modifica nome', `
-    <label class="flbl">Il tuo nome</label>
-    <input class="finp" id="f-name" type="text" value="${D.name||'Utente'}">
-    <div class="btn-row">
-      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
-      <button class="ios-btn btn-blue" onclick="saveName()">Salva</button>
-    </div>`);
-}
-
-function saveName() {
-  D.name = document.getElementById('f-name').value.trim() || 'Utente';
-  save(); closeModal();
-  document.getElementById('disp-name').textContent = D.name;
-  notif('✅ Profilo aggiornato');
-}
-
-function exportBackup() {
-  const json = JSON.stringify(D, null, 2);
-  const blob = new Blob([json], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'PersonalHub_Backup_' + new Date().toISOString().split('T')[0] + '.json';
-  a.click(); URL.revokeObjectURL(a.href);
-  notif('💾 Backup esportato!');
-}
-
-function importBackup(inp) {
-  const f = inp.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = e => {
-    try {
-      const p = JSON.parse(e.target.result);
-      Object.assign(D, p);
-      save(); renderHome(); nav('home');
-      notif('✅ Backup importato con successo!');
-    } catch {
-      notif('❌ File non valido');
-    }
-  };
-  r.readAsText(f);
-  inp.value = '';
-}
-
-function confirmDeleteAll() {
-  openModal('Elimina tutti i dati', `
-    <div style="text-align:center;padding:20px 0 24px">
-      <i class="fas fa-triangle-exclamation" style="font-size:48px;color:var(--red);display:block;margin-bottom:14px"></i>
-      <div style="font-size:17px;font-weight:600;margin-bottom:10px">Sei assolutamente sicuro?</div>
-      <div style="font-size:14px;color:var(--text3);line-height:1.6;max-width:280px;margin:0 auto">
-        Verranno eliminati definitivamente tutte le attività, documenti, veicoli SOLO dell'applicazione<br><br>
-        <strong style="color:var(--red)">Questa azione non può essere annullata.</strong>
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="ios-btn btn-fill" onclick="closeModal()">Annulla</button>
-      <button class="ios-btn btn-red" onclick="deleteAllData()"><i class="fas fa-trash-can"></i> Elimina tutto</button>
-    </div>`);
-}
-
-function deleteAllData() {
-  D.tasks = []; D.docs = [];
-  D.vehicles = []; D.inventory = []; D.name = 'Utente';
-  try { localStorage.removeItem('ph_v2'); } catch(e) {}
-  closeModal(); nav('home');
-  notif('🗑️ Tutti i dati eliminati');
-}
-
-/* ==============================
-   SEARCH
-   ============================== */
-function openSearch() {
-  openModal('Cerca', `
-    <input class="finp" id="sq" type="search" placeholder="Cerca in tutto..." oninput="doSearch(this.value)" style="margin-bottom:8px">
-    <div id="sr"></div>`);
-  setTimeout(() => document.getElementById('sq')?.focus(), 150);
-}
-
-function doSearch(q) {
-  const el = document.getElementById('sr'); if (!el) return;
-  if (!q) { el.innerHTML = ''; return; }
-  const ql = q.toLowerCase(), res = [];
-  D.tasks.filter(t => t.title.toLowerCase().includes(ql)).forEach(t =>
-    res.push({ic:'fa-list-check', col:'var(--blue)', text:t.title, sub:'Attività · '+t.priority}));
-  D.docs.filter(d => d.title.toLowerCase().includes(ql)).forEach(d =>
-    res.push({ic:d.ic, col:d.icCol, text:d.title, sub:'Documento · '+d.cat}));
-  D.vehicles.filter(v => v.name.toLowerCase().includes(ql)).forEach(v =>
-    res.push({ic:v.ic, col:'var(--purple)', text:v.name, sub:'Veicolo'}));
-  D.inventory.filter(i => i.name.toLowerCase().includes(ql)).forEach(i =>
-    res.push({ic:i.ic, col:i.col, text:i.name, sub:'Inventario · '+i.cat}));
-
-  el.innerHTML = res.length
-    ? '<div class="ios-list" style="margin:0">'+res.map(r =>
-        `<div class="ios-row"><div class="row-ic" style="background:${r.col}22"><i class="fas ${r.ic}" style="color:${r.col}"></i></div><div class="row-body"><div class="row-title">${r.text}</div><div class="row-sub">${r.sub}</div></div></div>`
-      ).join('')+'</div>'
-    : emptyHTML('fa-magnifying-glass', 'Nessun risultato per "' + q + '"');
-}
-
-/* ==============================
-   MODAL
-   ============================== */
-function openModal(title, body) {
-  document.getElementById('m-title').textContent = title;
-  document.getElementById('m-body').innerHTML = body;
-  document.getElementById('modal').classList.add('on');
-}
-
-function closeModal(e) {
-  if (!e || e.target === document.getElementById('modal'))
-    document.getElementById('modal').classList.remove('on');
-}
-
-/* ==============================
-   HELPERS
-   ============================== */
-function emptyHTML(ic, msg) {
-  return `<div class="empty"><i class="fas ${ic}"></i><p>${msg}</p></div>`;
-}
-
-/* ==============================
-   PWA / INSTALL
-   ============================== */
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredInstall = e;
-  const banner = document.getElementById('install-banner');
-  if (banner && !localStorage.getItem('ph_install_dismissed')) banner.style.display = 'flex';
-});
-
-function installPWA() {
-  if (!deferredInstall) return;
-  deferredInstall.prompt();
-  deferredInstall.userChoice.then(() => { deferredInstall = null; dismissInstall(); });
-}
-
-function dismissInstall() {
-  localStorage.setItem('ph_install_dismissed','1');
-  const banner = document.getElementById('install-banner');
-  if (banner) banner.style.display = 'none';
-}
-
-/* ==============================
-   SERVICE WORKER
-   ============================== */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    const sw = `
-const CACHE='ph-v2';
-const ASSETS=['./'];
-self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
-self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));
-self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{const clone=res.clone();caches.open(CACHE).then(c=>c.put(e.request,clone));return res;}).catch(()=>caches.match('./')))));`;
-    const blob = new Blob([sw], {type:'application/javascript'});
-    navigator.serviceWorker.register(URL.createObjectURL(blob));
-  });
-}
-
-/* ==============================
-   PWA MANIFEST
-   ============================== */
-(function() {
-  const manifest = {
-    name:'Personal Hub', short_name:'Personal Hub',
-    start_url:'./', display:'standalone',
-    background_color:'#000000', theme_color:'#0a84ff',
-    orientation:'portrait',
-    icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="%230a84ff"/><text y=".9em" font-size="70" x="12">🏠</text></svg>',sizes:'512x512',type:'image/svg+xml'}]
-  };
-  const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
-  document.getElementById('manifest-link').href = URL.createObjectURL(blob);
-})();
-
-/* ==============================
-   TOPBAR SCROLL EFFECT
-   ============================== */
-document.getElementById('scroll').addEventListener('scroll', e => {
-  document.getElementById('topbar').classList.toggle('scrolled', e.target.scrollTop > 8);
-}, {passive:true});
-
-/* ==============================
-   INIT
-   ============================== */
 load();
-renderHome();
-setInterval(updateClock, 15000);
-updateClock();
+loadTheme();
+nav('home');
 </script>
 </body>
 </html>
